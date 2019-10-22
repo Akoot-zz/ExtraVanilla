@@ -1,0 +1,6 @@
+chat:
+  format: "&7[%t&7] &7<&r&{name-color}%p&7> &r&{chat-color}%m"
+defaults:
+  default-title:
+    id: default
+    name: Guest

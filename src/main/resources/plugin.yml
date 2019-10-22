@@ -1,0 +1,33 @@
+name: ExtraVanilla
+version: ${project.version}
+main: net.akoot.plugins.extravanilla.ExtraVanilla
+api-version: 1.13
+prefix: EV
+depend: [UltraVanilla]
+authors: [Akoot_]
+description: Extra commands and features for UltraVanilla
+website: https://akoot.net/plugins/extravanilla
+commands:
+  extravanilla:
+    aliases: [uv]
+    description: Base ExtraVanilla command
+    permission: extravanilla.command.extravanilla
+    usage: /ev reload
+  channel:
+    description: Create, edit, and delete channels
+    permission: extravanilla.command.channel
+    usage: |
+      /channel
+  title:
+    description: Create, edit, select, and delete titles
+    permission: extravanilla.command.titles
+    usage: |
+      /title list [player]
+      /title show-all
+      /title create <id> <rarity> <name>
+      /title modify-id <id> <id>
+      /title modify-rarity <id> <rarity>
+      /title modify-name <id> <name>
+      /title set [player] <id>
+      /title give [player] <id>
+      /title delete <id>

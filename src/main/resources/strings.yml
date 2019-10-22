@@ -1,0 +1,32 @@
+command:
+  extravanilla:
+    message:
+      reload: "All configurations reloaded!"
+  title:
+    message:
+      cleanup: "Cleaned up &@%p's&: titles!"
+      give: "Gave &@%p&: the title '%t&:'"
+      modify:
+        id: "Changed the id of '%t&:' to &#%i&:!"
+        rarity: "Set the rarity of '%t&:' to &.%r&:!"
+        name: "'%t1&:' was renamed to '%t2&:'"
+      create: "Created title '%t&:'!"
+      delete: "Deleted title '%t&:'!"
+      remove: "Removed '%t&:' from &@%p's&: unlocked titles!"
+      set:
+        self: "Set '%t&:' as your selected title!"
+        player: "Set '%t&:' as &@%p's&: selected title!"
+      list:
+        unlocked:
+          title: "------ &@%p's &.Unlocked titles&: ------\n"
+          item: "- &#%v\n"
+        all:
+          title: "------ List of Titles ------\n"
+          item: "- &#%v\n"
+    error:
+      invalid-id: "&w%i&: is not a valid title id!"
+      locked-title: "You haven't unlocked the '%t&:' title yet!"
+      id-taken: "A title with an id &#%i&: already exists!"
+  channel:
+    message:
+      test: "TEST, &@%p&:!"
