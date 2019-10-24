@@ -9,7 +9,7 @@ description: Extra commands and features for UltraVanilla
 website: https://akoot.net/plugins/extravanilla
 commands:
   extravanilla:
-    aliases: [uv]
+    aliases: [ev]
     description: Base ExtraVanilla command
     permission: extravanilla.command.extravanilla
     usage: /ev reload
