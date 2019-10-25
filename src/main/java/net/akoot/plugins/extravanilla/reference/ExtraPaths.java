@@ -27,6 +27,8 @@ public class ExtraPaths {
         public static final String UNLOCKED_TITLES = "extra.titles.unlocked";
         public static final String SELECTED_TITLE = "extra.titles.selected";
 
+        public static final String AFK = "extra.afk";
+
     }
 
 }

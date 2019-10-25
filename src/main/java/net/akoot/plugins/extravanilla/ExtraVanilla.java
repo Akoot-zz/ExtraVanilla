@@ -1,5 +1,6 @@
 package net.akoot.plugins.extravanilla;
 
+import net.akoot.plugins.extravanilla.commands.AfkCommand;
 import net.akoot.plugins.extravanilla.commands.ChannelCommand;
 import net.akoot.plugins.extravanilla.commands.ExtravanillaCommand;
 import net.akoot.plugins.extravanilla.commands.TitleCommand;
@@ -88,8 +89,14 @@ public final class ExtraVanilla extends JavaPlugin {
         // Register /titles command
         getCommand("title").setExecutor(new TitleCommand(instance, strings));
 
+        // Register /afk command
+        AfkCommand afkCommand = new AfkCommand(instance, strings);
+        getCommand("afk").setExecutor(afkCommand);
+
         // Register events
         getServer().getPluginManager().registerEvents(new EventListener(instance), instance);
+
+        getServer().getPluginManager().registerEvents(afkCommand, instance);
     }
 
     @Override

@@ -1,4 +1,13 @@
 command:
+  afk:
+    broadcast:
+      message: "&@%p &:is &.%s AFK"
+      true: "now"
+      false: "no longer"
+    query:
+      message: "&@%p &:is &.%s AFK"
+      true: "currently"
+      false: "currently not"
   extravanilla:
     message:
       reload: "All configurations reloaded!"
