@@ -1,9 +1,6 @@
 package net.akoot.plugins.extravanilla;
 
-import net.akoot.plugins.extravanilla.commands.AfkCommand;
-import net.akoot.plugins.extravanilla.commands.ChannelCommand;
-import net.akoot.plugins.extravanilla.commands.ExtravanillaCommand;
-import net.akoot.plugins.extravanilla.commands.TitleCommand;
+import net.akoot.plugins.extravanilla.commands.*;
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
 import net.akoot.plugins.extravanilla.serializable.Channel;
 import net.akoot.plugins.extravanilla.serializable.Title;
@@ -15,6 +12,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ExtraVanilla extends JavaPlugin {
@@ -66,7 +64,7 @@ public final class ExtraVanilla extends JavaPlugin {
 
         // Register titles
         titles = new Config(instance, getClass(), "titles.yml");
-        Titles.setTitles((List<Title>) titles.getConfig().getList(ExtraPaths.Titles.ROOT));
+        Titles.setTitles((List<Title>) titles.getConfig().getList(ExtraPaths.Titles.ROOT, new ArrayList<>()));
 
         // Register channels
         channels = new Config(instance, getClass(), "channels.yml");
@@ -92,6 +90,9 @@ public final class ExtraVanilla extends JavaPlugin {
         // Register /afk command
         AfkCommand afkCommand = new AfkCommand(instance, strings);
         getCommand("afk").setExecutor(afkCommand);
+
+        // Register /alias command
+        getCommand("alias").setExecutor(new AliasCommand(instance, strings));
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventListener(instance), instance);

@@ -66,7 +66,7 @@ public class Titles {
                 }
             }
         }
-        return getDefaultTitle();
+        return null;
     }
 
     public static List<String> listIds() {
@@ -181,5 +181,10 @@ public class Titles {
             }
         }
         return false;
+    }
+
+    public static Title getTitleOrDefault(String id) {
+        Title title = getTitle(id);
+        return title != null ? title : getDefaultTitle();
     }
 }

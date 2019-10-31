@@ -32,9 +32,9 @@ public class EventListener implements Listener {
         event.setMessage(message);
 
         String nickname = config.getString(ExtraPaths.User.NICKNAME, player.getName()) + ChatColor.RESET;
-        ChatColor nameColor = ChatColor.valueOf(config.getString(ExtraPaths.User.NAME_COLOR, "RED"));
-        ChatColor chatColor = ChatColor.valueOf(config.getString(ExtraPaths.User.CHAT_COLOR, "AQUA"));
-        Title title = Titles.getTitle(config.getString(ExtraPaths.User.SELECTED_TITLE));
+        ChatColor nameColor = ChatColor.valueOf(config.getString(ExtraPaths.User.NAME_COLOR, "WHITE"));
+        ChatColor chatColor = ChatColor.valueOf(config.getString(ExtraPaths.User.CHAT_COLOR, "WHITE"));
+        Title title = Titles.getTitleOrDefault(config.getString(ExtraPaths.User.SELECTED_TITLE));
 
         String format = plugin.getConfig().getString(ExtraPaths.CHAT_FORMAT, event.getFormat())
                 .replaceAll("%t", title + "")

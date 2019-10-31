@@ -1,11 +1,26 @@
 command:
+  alias:
+    message:
+      unset:
+        self: "Unset your alias"
+        other: "Unset &@%p's &:alias"
+      set:
+        self: "Set your alias to &.%a"
+        other: "Set &@%p's &:alias to &.%a"
+      query:
+        self: "Your alias is '&.%a&:'"
+        other: "&@%p's &:alias is '&.%a&:'"
+    error:
+      no-alias:
+        self: "You don't have an alias"
+        other: "&@%p &:doesn't have an alias"
   afk:
+    prefix: "[AFK] "
+    message: "&@%p &:is %s &.AFK"
     broadcast:
-      message: "&@%p &:is &.%s AFK"
       true: "now"
       false: "no longer"
     query:
-      message: "&@%p &:is &.%s AFK"
       true: "currently"
       false: "currently not"
   extravanilla:
@@ -33,6 +48,7 @@ command:
           title: "------ List of Titles ------\n"
           item: "- &#%v\n"
     error:
+      invalid-rarity: "&w%r &:is not a valid rarity!"
       invalid-id: "&w%i&: is not a valid title id!"
       locked-title: "You haven't unlocked the '%t&:' title yet!"
       id-taken: "A title with an id &#%i&: already exists!"

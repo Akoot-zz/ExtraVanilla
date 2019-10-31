@@ -8,6 +8,12 @@ authors: [Akoot_]
 description: Extra commands and features for UltraVanilla
 website: https://akoot.net/plugins/extravanilla
 commands:
+  alias:
+    description: Add an alias to a player
+    permission: extravanilla.command.alias
+    usage: |
+      /alias set|unset <alias> [player]
+      /alias [player]
   afk:
     description: Toggle and check if a player is AFK
     permission: extravanilla.command.afk

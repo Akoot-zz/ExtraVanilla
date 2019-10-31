@@ -25,6 +25,10 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        this.command = command;
+
+        // No arguments
         if (args.length == 0) {
             if (sender instanceof Player) {
 
@@ -33,7 +37,10 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
             } else {
                 sender.sendMessage(uvStrings.getString("error.player-only"));
             }
-        } else if (args.length == 1) {
+        }
+
+        // <player>
+        else if (args.length == 1) {
             Player player = plugin.getServer().getPlayer(args[0]);
             if (player != null) {
                 sender.sendMessage(query(player.getName(), isAFK(player)));
@@ -48,6 +55,7 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        this.command = command;
         return null;
     }
 
@@ -59,6 +67,7 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
         }
     }
 
+
     private boolean isAFK(Player player) {
         return Users.getUser(player).getBoolean(ExtraPaths.User.AFK, false);
     }
@@ -68,16 +77,17 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
     }
 
     private String query(String name, boolean afk) {
-        String status = strings.getString("command.afk.query." + afk);
-        return strings.getString("command.afk.query.message", "%p", name, "%s", status);
+        String status = format("query." + afk);
+        return format("message", "%p", name, "%s", status, "&:", color + "");
     }
 
     private void broadcast(String name, boolean afk) {
-        String status = strings.getString("command.afk.broadcast." + afk);
-        plugin.getServer().broadcastMessage(strings.getString("command.afk.broadcast.message", "%p", name, "%s", status));
+        String status = format("broadcast." + afk);
+        plugin.getServer().broadcastMessage(format("message", "%p", name, "%s", status, "&:", color + ""));
     }
 
     private void setAFK(Player player, boolean afk) {
+        player.setPlayerListName((afk ? color + format("prefix") : "") + ChatColor.RESET + player.getDisplayName());
         Users.set(player, ExtraPaths.User.AFK, afk);
         broadcast(player.getName(), afk);
     }

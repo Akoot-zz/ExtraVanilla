@@ -19,12 +19,16 @@ public class ChannelCommand extends UltraCommand implements CommandExecutor, Tab
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage(message(command, "test", "%p", sender.getName()));
+
+        this.command = command;
+
+        sender.sendMessage(message("test", "%p", sender.getName()));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        this.command = command;
         return null;
     }
 }

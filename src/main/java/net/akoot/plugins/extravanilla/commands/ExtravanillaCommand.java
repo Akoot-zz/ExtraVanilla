@@ -28,11 +28,11 @@ public class ExtravanillaCommand extends UltraCommand implements CommandExecutor
 
             // reload
             if (args[0].equalsIgnoreCase("reload")) {
-                if (hasPermission(sender, command, "reload")) {
+                if (hasPermission(sender, "reload")) {
                     plugin.reloadConfig();
                     strings.reload();
                     ExtraVanilla.getInstance().getTitles().reload();
-                    sender.sendMessage(message(command, "reload"));
+                    sender.sendMessage(message("reload"));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "reload the configs"));
                 }
@@ -45,6 +45,7 @@ public class ExtravanillaCommand extends UltraCommand implements CommandExecutor
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        this.command = command;
         if (args.length == 1) {
             return Collections.singletonList("reload");
         }

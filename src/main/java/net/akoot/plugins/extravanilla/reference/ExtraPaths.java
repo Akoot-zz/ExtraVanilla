@@ -29,6 +29,8 @@ public class ExtraPaths {
 
         public static final String AFK = "extra.afk";
 
+        public static final String ALIAS = "extra.alias";
+
     }
 
 }

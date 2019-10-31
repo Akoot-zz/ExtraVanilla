@@ -4,6 +4,7 @@ import net.akoot.plugins.extravanilla.Titles;
 import net.akoot.plugins.extravanilla.serializable.Title;
 import net.akoot.plugins.ultravanilla.Strings;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
+import net.akoot.plugins.ultravanilla.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -25,6 +26,8 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+        this.command = command;
+
         // Sub-commands: none
         if (args.length == 0) {
             // Send usage
@@ -41,7 +44,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             if (args[0].equalsIgnoreCase("list")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    sender.sendMessage(list(command, "list.unlocked", Titles.getUnlockedTitlesFormatted(player, color), "%p", player.getName()));
+                    sender.sendMessage(list("list.unlocked", Titles.getUnlockedTitlesFormatted(player, color), "%p", player.getName()));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.player-only"));
                 }
@@ -49,7 +52,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
             // show-all
             else if (args[0].equalsIgnoreCase("show-all")) {
-                sender.sendMessage(list(command, "list.all", Titles.getTitlesFormatted(color)));
+                sender.sendMessage(list("list.all", Titles.getTitlesFormatted(color)));
             } else {
                 return false;
             }
@@ -64,9 +67,9 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
             // list <player>
             if (args[0].equalsIgnoreCase("list")) {
-                if (hasPermission(sender, command, "list.other")) {
+                if (hasPermission(sender, "list.other")) {
                     OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
-                    sender.sendMessage(list(command, "list.all", Titles.getUnlockedTitlesFormatted(player, color), "%p", player.getName()));
+                    sender.sendMessage(list("list.all", Titles.getUnlockedTitlesFormatted(player, color), "%p", player.getName()));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "list other's unlocked titles"));
                 }
@@ -74,11 +77,11 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
             // delete <id>
             else if (args[0].equalsIgnoreCase("delete")) {
-                if (hasPermission(sender, command, "create")) {
+                if (hasPermission(sender, "create")) {
                     Title title = Titles.getTitle(args[1]);
                     if (title != null) {
                         Titles.delete(title);
-                        sender.sendMessage(message(command, "delete", "%t", title.formatted(color)));
+                        sender.sendMessage(message("delete", "%t", title.formatted(color)));
                     }
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "delete titles"));
@@ -98,16 +101,16 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
                     // Check if the id is valid
                     if (title == null) {
-                        sender.sendMessage(error(command, "invalid-id", "%i", id));
+                        sender.sendMessage(error("invalid-id", "%i", id));
                         return true;
                     }
 
                     // Check if the player has the title unlocked
-                    if (Titles.hasTitle(player, id)) {
+                    if (Titles.hasTitle(player, id) || hasPermission(sender, "give.player")) {
                         Titles.set(player, id);
-                        sender.sendMessage(message(command, "set.self", "%t", title.formatted(color)));
+                        sender.sendMessage(message("set.self", "%t", title.formatted(color)));
                     } else {
-                        sender.sendMessage(error(command, "locked-title", "%t", title.formatted(color)));
+                        sender.sendMessage(error("locked-title", "%t", title.formatted(color)));
                     }
                 } else {
                     sender.sendMessage(uvStrings.getString("error.player-only"));
@@ -156,7 +159,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
             // Check if the id is valid
             if (title == null) {
-                sender.sendMessage(error(command, "invalid-id", "%i", id));
+                sender.sendMessage(error("invalid-id", "%i", id));
                 return true;
             }
 
@@ -164,12 +167,22 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             if (args[0].equalsIgnoreCase("modify-rarity")) {
 
                 // Check if the sender has permission to modify id's
-                if (hasPermission(sender, command, "modify")) {
+                if (hasPermission(sender, "modify")) {
 
-                    Title.Rarity rarity = Title.Rarity.valueOf(args[1]);
+                    Title.Rarity rarity;
+
+                    // Set the rarity if it is valid
+                    try {
+                        rarity = Title.Rarity.valueOf(args[2].toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        sender.sendMessage(error("invalid-rarity", "%r", args[2]));
+                        return true;
+                    }
+
+                    // Set the rarity
                     title.setRarity(rarity);
-
-                    sender.sendMessage(message(command, "modify.rarity", "%t", title.formatted(color), "%r", rarity.toString()));
+                    Titles.save();
+                    sender.sendMessage(message("modify.rarity", "%t", title.formatted(color), "%r", rarity.toString().toLowerCase()));
 
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "modify titles"));
@@ -180,12 +193,19 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("modify-id")) {
 
                 // Check if the sender has permission to modify id's
-                if (hasPermission(sender, command, "modify")) {
+                if (hasPermission(sender, "modify")) {
 
-                    String newId = args[1];
+                    String newId = args[2].toLowerCase();
+
+                    if (!validId(newId)) {
+                        sender.sendMessage(error("invalid-id", "%i", newId));
+                        return true;
+                    }
+
                     title.setId(newId);
+                    Titles.save();
 
-                    sender.sendMessage(message(command, "modify.id", "%t", title.formatted(color), "%i", newId));
+                    sender.sendMessage(message("modify.id", "%t", title.formatted(color), "%i", newId));
 
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "modify titles"));
@@ -196,19 +216,19 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("set")) {
 
                 // Check if the sender has permission to give players titles
-                if (hasPermission(sender, command, "set.player")) {
+                if (hasPermission(sender, "set.player")) {
 
                     // Give the player the title if they don't have it
-                    if (hasPermission(sender, command, "give.player")) {
+                    if (hasPermission(sender, "give.player")) {
 
                         Titles.give(player, id);
 
-                        sender.sendMessage(message(command, "give", "%p", player.getName(), "%t", title.formatted(color)));
+                        sender.sendMessage(message("give", "%p", player.getName(), "%t", title.formatted(color)));
                     }
 
                     Titles.set(player, id);
 
-                    sender.sendMessage(message(command, "set.player", "%p", player.getName(), "%t", title.formatted(color)));
+                    sender.sendMessage(message("set.player", "%p", player.getName(), "%t", title.formatted(color)));
 
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "set a title for other players"));
@@ -219,11 +239,11 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("remove")) {
 
                 // Check if the sender has permission to remove titles from players
-                if (hasPermission(sender, command, "remove")) {
+                if (hasPermission(sender, "remove")) {
 
                     Titles.remove(player, id);
 
-                    sender.sendMessage(message(command, "remove", "%p", player.getName(), "%t", title.formatted(color)));
+                    sender.sendMessage(message("remove", "%p", player.getName(), "%t", title.formatted(color)));
 
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "remove titles from players"));
@@ -234,14 +254,40 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("give")) {
 
                 // Check if the sender has permission to give players titles
-                if (hasPermission(sender, command, "give.player")) {
+                if (hasPermission(sender, "give.player")) {
 
                     Titles.give(player, id);
 
-                    sender.sendMessage(message(command, "give", "%p", player.getName(), "%t", title.formatted(color)));
+                    sender.sendMessage(message("give", "%p", player.getName(), "%t", title.formatted(color)));
 
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "give a title to other players"));
+                }
+            }
+
+            // modify-name <id> <name>
+            else if (args[0].equalsIgnoreCase("modify-name")) {
+
+                // Check if the sender can modify titles
+                if (hasPermission(sender, "modify")) {
+
+                    // Set id, title, and newName variables
+                    id = args[1];
+                    title = Titles.getTitle(id);
+                    String newName = args[2];
+
+                    // Check if the id is valid
+                    if (title == null) {
+                        sender.sendMessage(error("invalid-id", "%i", id));
+                        return true;
+                    }
+
+                    // Set the title's name
+                    title.setName(newName);
+                    Titles.save();
+                    sender.sendMessage(message("modify.name", "%t", title.toString()));
+                } else {
+                    sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "modify titles"));
                 }
             } else {
                 return false;
@@ -258,25 +304,40 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             if (args[0].equalsIgnoreCase("create")) {
 
                 // Check if the sender can create titles
-                if (hasPermission(sender, command, "create")) {
+                if (hasPermission(sender, "create")) {
 
                     // Set id variable
-                    String id = args[1];
+                    String id = args[1].toLowerCase();
+
+                    if (!validId(id)) {
+                        sender.sendMessage(error("invalid-id", "%i", id));
+                        return true;
+                    }
 
                     // Check if the title id already exists
                     if (Titles.exists(id)) {
-                        sender.sendMessage(error(command, "id-taken", "%i", id));
+                        sender.sendMessage(error("id-taken", "%i", id));
+                        return true;
+                    }
+
+                    // Set the default rarity
+                    Title.Rarity rarity;
+
+                    // Set the rarity if it is valid
+                    try {
+                        rarity = Title.Rarity.valueOf(args[2].toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        sender.sendMessage(error("invalid-rarity", "%r", args[1]));
                         return true;
                     }
 
                     // Set rarity, name, and title variables
-                    Title.Rarity rarity = Title.Rarity.valueOf(args[2]);
-                    String name = getArg(args, 4);
+                    String name = getArg(args, 3);
                     Title title = new Title(id, name, rarity);
 
                     // Add the new title to titles in memory
                     Titles.add(title);
-                    sender.sendMessage(message(command, "create", "%t", title.toString()));
+                    sender.sendMessage(message("create", "%t", title.toString()));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "create titles"));
                 }
@@ -286,22 +347,25 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("modify-name")) {
 
                 // Check if the sender can modify titles
-                if (hasPermission(sender, command, "modify")) {
+                if (hasPermission(sender, "modify")) {
 
                     // Set id, title, and newName variables
                     String id = args[1];
                     Title title = Titles.getTitle(id);
-                    String newName = getArg(args, 3);
 
                     // Check if the id is valid
                     if (title == null) {
-                        sender.sendMessage(error(command, "invalid-id", "%i", id));
+                        sender.sendMessage(error("invalid-id", "%i", id));
                         return true;
                     }
 
+                    Title oldTitle = new Title(title.getId(), title.getName(), title.getRarity());
+                    String newName = getArg(args, 2);
+
                     // Set the title's name
                     title.setName(newName);
-                    sender.sendMessage(message(command, "modify.name", "%t", title.toString()));
+                    Titles.save();
+                    sender.sendMessage(message("modify.name", "%t1", oldTitle.toString(), "%t2", title.toString()));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "modify titles"));
                 }
@@ -314,8 +378,14 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
         return true;
     }
 
+    private boolean validId(String id) {
+        return StringUtil.isAlphaNumeric(id) && id.length() <= 16;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        this.command = command;
 
         List<String> suggestions = new ArrayList<>();
 
@@ -339,24 +409,24 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             suggestions.add("show-all");
 
             // Check if the sender has permission to modify titles
-            if (hasPermission(sender, command, "modify")) {
+            if (hasPermission(sender, "modify")) {
                 suggestions.add("modify-name");
                 suggestions.add("modify-rarity");
                 suggestions.add("modify-id");
             }
 
             // Check if the sender has permission to give titles to players
-            if (hasPermission(sender, command, "give")) {
+            if (hasPermission(sender, "give")) {
                 suggestions.add("give");
             }
 
             // Check if the sender has permission to remove titles from players
-            if (hasPermission(sender, command, "remove")) {
+            if (hasPermission(sender, "remove")) {
                 suggestions.add("remove");
             }
 
             // Check if the sender has permission to create and delete titles
-            if (hasPermission(sender, command, "create")) {
+            if (hasPermission(sender, "create")) {
                 suggestions.add("delete");
                 suggestions.add("create");
             }
@@ -388,7 +458,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
 
             // give <player> <id>
             else if (args[0].equalsIgnoreCase("give")) {
-                if (hasPermission(sender, command, "give.player")) {
+                if (hasPermission(sender, "give.player")) {
                     suggestions.addAll(getOfflinePlayerNames());
                 }
             }
@@ -397,11 +467,11 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
              set <player> <id>
             */
             else if (args[0].toLowerCase().matches("set")) {
-                if (hasPermission(sender, command, "set.player")) {
+                if (hasPermission(sender, "set.player")) {
                     suggestions.addAll(getOfflinePlayerNames());
                 }
                 if (sender instanceof Player) {
-                    if (hasPermission(sender, command, "unlocked-all")) {
+                    if (hasPermission(sender, "unlocked-all")) {
                         suggestions.addAll(Titles.listIds());
                     } else {
                         suggestions.addAll(Titles.getTitleIds((Player) sender));
@@ -422,7 +492,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             if (args[0].equalsIgnoreCase("modify-rarity")) {
                 if (Titles.exists(args[1])) {
                     for (Title.Rarity rarity : Title.Rarity.values()) {
-                        suggestions.add(rarity.name());
+                        suggestions.add(rarity.name().toLowerCase());
                     }
                 }
             }
@@ -430,7 +500,7 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             // modify-id <id> <id>
             else if (args[0].equalsIgnoreCase("modify-id")) {
                 if (Titles.exists(args[1])) {
-                    suggestions = Titles.listIds();
+                    suggestions = new ArrayList<>();
                 }
             }
 
@@ -438,24 +508,24 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
             else if (args[0].equalsIgnoreCase("create")) {
                 if (!Titles.exists(args[1])) {
                     for (Title.Rarity rarity : Title.Rarity.values()) {
-                        suggestions.add(rarity.name());
+                        suggestions.add(rarity.name().toLowerCase());
                     }
                 }
             }
 
             // give <player> <id>
             else if (args[0].equalsIgnoreCase("give")) {
-                if (hasPermission(sender, command, "give.player")) {
+                if (hasPermission(sender, "give.player")) {
                     suggestions = Titles.listIds();
                 }
             }
 
             // set <player> <id>
             else if (args[0].toLowerCase().matches("set|remove")) {
-                if (hasPermission(sender, command, "set.player")) {
+                if (hasPermission(sender, "set.player")) {
                     OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
                     if (isValid(player)) {
-                        if (hasPermission(sender, command, "unlocked-all")) {
+                        if (hasPermission(sender, "unlocked-all")) {
                             suggestions.addAll(Titles.listIds());
                         } else {
                             suggestions = Titles.getTitleIds(player);
