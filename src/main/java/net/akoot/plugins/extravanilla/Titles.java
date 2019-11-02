@@ -53,11 +53,20 @@ public class Titles {
         save();
     }
 
+    /**
+     * Save the titles to titles.yml
+     */
     public static void save() {
         ExtraVanilla.getInstance().getTitles().getConfig().set(ExtraPaths.Titles.ROOT, titles);
         ExtraVanilla.getInstance().getTitles().saveConfig();
     }
 
+    /**
+     * Get the title from memory if it exists, else return null
+     *
+     * @param id The ID of the title
+     * @return The title object if it exists in memory, null if it doesn't exist
+     */
     public static Title getTitle(String id) {
         if (id != null) {
             for (Title title : titles) {
@@ -69,6 +78,10 @@ public class Titles {
         return null;
     }
 
+    /**
+     * Get a list of IDs from all of the titles in memory
+     * @return
+     */
     public static List<String> listIds() {
         List<String> list = new ArrayList<>();
         for (Title title : titles) {
@@ -77,10 +90,22 @@ public class Titles {
         return list;
     }
 
+    /**
+     * Get the unlocked titles of a player formatted
+     * @param player The player
+     * @param color The default color
+     * @return The list of unlocked titles of a player: formatted
+     */
     public static List<String> getUnlockedTitlesFormatted(OfflinePlayer player, ChatColor color) {
         return getTitlesFormatted(getTitles(player), color);
     }
 
+    /**
+     * Get the list of titles but as a formatted string: title.formatted(color)
+     * @param titles A list of titles to add to the string list
+     * @param color The default color
+     * @return A list of titles formatted
+     */
     public static List<String> getTitlesFormatted(List<Title> titles, ChatColor color) {
         List<String> list = new ArrayList<>();
         for (Title title : titles) {
@@ -89,10 +114,20 @@ public class Titles {
         return list;
     }
 
+    /**
+     * Get the list of all the titles but formatted
+     * @param color The default color
+     * @return The list of all the titles formatted
+     */
     public static List<String> getTitlesFormatted(ChatColor color) {
         return getTitlesFormatted(titles, color);
     }
 
+    /**
+     * Give a title to a player (unlocks it for them)
+     * @param player The player to give the title to
+     * @param id The ID of the title to be given to the player
+     */
     public static void give(OfflinePlayer player, String id) {
         if (!hasTitle(player, id)) {
             List<String> unlockedTitles = getTitleIds(player);
@@ -102,20 +137,29 @@ public class Titles {
         }
     }
 
+    /**
+     * Set the display title of a player
+     * @param player The player to set the display title for
+     * @param id The ID of the title to be the display title for the player
+     */
     public static void set(OfflinePlayer player, String id) {
         Users.getUser(player).set(ExtraPaths.User.SELECTED_TITLE, id);
         Users.saveUser(player);
     }
 
+    /**
+     * Remove a title from a player
+     * @param player
+     * @param id
+     */
     public static void remove(OfflinePlayer player, String id) {
-
         if (hasTitle(player, id)) {
             List<String> unlockedTitles = getTitleIds(player);
 
             unlockedTitles.remove(id);
             Users.getUser(player).set(ExtraPaths.User.UNLOCKED_TITLES, unlockedTitles);
 
-            if (getSelectedId(player).equals(id)) {
+            if (getDisplayTitleId(player).equals(id)) {
                 set(player, getHighestRankingTitle(player).getId());
             }
 
@@ -123,6 +167,11 @@ public class Titles {
         }
     }
 
+    /**
+     * Get the highest ranking title a player owns
+     * @param player The player
+     * @return The highest ranking title a player owns
+     */
     public static Title getHighestRankingTitle(OfflinePlayer player) {
         List<Title> unlockedTitles = getTitles(player);
         Title title = getDefaultTitle();
@@ -134,14 +183,31 @@ public class Titles {
         return title;
     }
 
-    public static Title getSelectedTitle(OfflinePlayer player) {
-        return getTitle(getSelectedId(player));
+    /**
+     * Get the display title of a player
+     *
+     * @param player The player
+     * @return The display title of a player
+     */
+    public static Title getDisplayTitle(OfflinePlayer player) {
+        return getTitle(getDisplayTitleId(player));
     }
 
-    public static String getSelectedId(OfflinePlayer player) {
+    /**
+     * Get the ID of the display title of a player
+     *
+     * @param player The player
+     * @return The ID of the display title of a player
+     */
+    public static String getDisplayTitleId(OfflinePlayer player) {
         return Users.getUser(player).getString(ExtraPaths.User.SELECTED_TITLE);
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     */
     public static List<Title> getTitles(OfflinePlayer player) {
         List<Title> unlockedTitles = new ArrayList<>();
         for (String id : getTitleIds(player)) {
@@ -153,10 +219,20 @@ public class Titles {
         return unlockedTitles;
     }
 
+    /**
+     * Get all of the player's unlocked title IDs
+     * @param player The player
+     * @return The IDs of all the titles a player has unlocked
+     */
     public static List<String> getTitleIds(OfflinePlayer player) {
         return Users.getUser(player).getStringList(ExtraPaths.User.UNLOCKED_TITLES);
     }
 
+    /**
+     * Get the names of all the unlocked titles from a player
+     * @param player The player
+     * @return
+     */
     public static List<String> getUnlockedTitleNames(OfflinePlayer player) {
         List<String> list = new ArrayList<>();
         for (Title title : getTitles(player)) {
@@ -165,6 +241,11 @@ public class Titles {
         return list;
     }
 
+    /**
+     * Check if a title ID is valid
+     * @param id The title ID
+     * @return Wether or not the title ID is valid
+     */
     public static boolean exists(String id) {
         for (Title title : titles) {
             if (title.getId().equals(id)) {
@@ -174,6 +255,12 @@ public class Titles {
         return false;
     }
 
+    /**
+     * Check if a player has the title unlocked
+     * @param player The player
+     * @param id The ID
+     * @return Wether or not a player has the title unlocked
+     */
     public static boolean hasTitle(OfflinePlayer player, String id) {
         for (Title title : getTitles(player)) {
             if (title.getId().equals(id)) {
@@ -183,6 +270,11 @@ public class Titles {
         return false;
     }
 
+    /**
+     * Get a title from an ID, if none of the titles have that ID then return the default title
+     * @param id The ID of the title
+     * @return The title if it exists, if it doesn't then return the default title specified in config.yml
+     */
     public static Title getTitleOrDefault(String id) {
         Title title = getTitle(id);
         return title != null ? title : getDefaultTitle();
