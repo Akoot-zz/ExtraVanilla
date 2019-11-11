@@ -41,3 +41,9 @@ commands:
       /title set [player] <id>
       /title give [player] <id>
       /title delete <id>
+  info:
+    description: Get info about a player
+    permission: extravanilla.command.info
+    usage: |
+      /info <player>
+      /info search <search>

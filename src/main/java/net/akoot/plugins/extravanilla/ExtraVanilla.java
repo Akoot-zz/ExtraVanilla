@@ -94,6 +94,9 @@ public final class ExtraVanilla extends JavaPlugin {
         // Register /alias command
         getCommand("alias").setExecutor(new AliasCommand(instance, strings));
 
+        // Register /info command
+        getCommand("info").setExecutor(new InfoCommand(instance, strings));
+
         // Register events
         getServer().getPluginManager().registerEvents(new EventListener(instance), instance);
 

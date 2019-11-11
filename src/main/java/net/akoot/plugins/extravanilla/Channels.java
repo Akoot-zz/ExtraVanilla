@@ -9,6 +9,10 @@ import java.util.UUID;
 
 public class Channels {
 
+    public enum SenderRole {
+        OWNER, ADMIN, MEMBER
+    }
+
     private static List<Channel> channels;
 
     public static void add(Channel channel) {

@@ -33,4 +33,11 @@ public class ExtraPaths {
 
     }
 
+    public class Discord {
+
+        public static final String TOKEN = "discord.token";
+        public static final String MAIN_CHANNEL = "discord.main-channel";
+
+    }
+
 }
