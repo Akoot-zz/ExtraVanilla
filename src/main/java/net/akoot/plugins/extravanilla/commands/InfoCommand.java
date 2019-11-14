@@ -8,6 +8,7 @@ import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.reference.Palette;
 import net.akoot.plugins.ultravanilla.reference.UltraPaths;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,10 +36,16 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
         if (args.length == 0) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                Map<String, String> info = getInfo(player);
-                for (String key : info.keySet()) {
-                    player.sendMessage(key + ": " + info.get(key));
-                }
+                printInfo(sender, player);
+            } else {
+                sender.sendMessage(playerOnly("show info about yourself"));
+            }
+        } else if (args.length == 1) {
+            OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[0]);
+            if (isValid(player)) {
+                printInfo(sender, player);
+            } else {
+                sender.sendMessage(playerInvalid(args[0]));
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("search")) {
@@ -49,22 +56,22 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
                     String displayName = ChatColor.stripColor(player.getDisplayName());
                     String alias = Users.getUser(player).getString(ExtraPaths.User.ALIAS);
                     List<String> pastNames = Users.getUser(player).getStringList(UltraPaths.User.PAST_NAMES);
-                    if (username.contains(search)) {
+                    if (username.toLowerCase().contains(search.toLowerCase())) {
                         results.add(username.replace(search, Palette.TRUE + search + color));
-                    } else if (displayName.contains(search)) {
-                        results.add(displayName.replace(search, Palette.TRUE + search + color) + " (" + username + ")");
-                    } else if (alias != null && alias.contains(search)) {
+                    } else if (displayName.toLowerCase().contains(search.toLowerCase())) {
+                        results.add(displayName.replace(search, Palette.TRUE + search + color) + " (" + Palette.NOUN + username + color + ")");
+                    } else if (alias != null && alias.toLowerCase().contains(search.toLowerCase())) {
                         results.add(alias.replace(search, Palette.TRUE + search + color) + " (" + username + ")");
                     } else {
                         for (String name : pastNames) {
-                            if (name.contains(search)) {
+                            if (name.toLowerCase().contains(search.toLowerCase())) {
                                 results.add(name.replace(search, Palette.TRUE + search + color) + " (" + username + ")");
                                 break;
                             }
                         }
                     }
                 }
-                sender.sendMessage(color + "Found: " + String.join(", ", results));
+                sender.sendMessage(list("search", results));
             } else {
                 return false;
             }
@@ -73,15 +80,27 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
         return true;
     }
 
+    private void printInfo(CommandSender sender, OfflinePlayer player) {
+        Map<String, String> info = getInfo(player);
+        List<String> values = new ArrayList<>();
+        for (String key : info.keySet()) {
+            values.add(format("item-format", "%k", key, "%v", info.get(key)));
+        }
+        sender.sendMessage(list("info", values, "%p", player.getName()));
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         this.command = command;
         return null;
     }
 
-    private Map<String, String> getInfo(Player player) {
+    private Map<String, String> getInfo(OfflinePlayer player) {
 
+        // Create a hash map
         Map<String, String> info = new HashMap<>();
+
+        // Get the player's config
         YamlConfiguration user = Users.getUser(player);
 
         // Username

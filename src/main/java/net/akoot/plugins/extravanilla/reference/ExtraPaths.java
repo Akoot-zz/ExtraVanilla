@@ -2,15 +2,22 @@ package net.akoot.plugins.extravanilla.reference;
 
 public class ExtraPaths {
 
-    public static final String CHAT_FORMAT = "chat.format";
+    public static class Config {
 
-    public class Channels {
+        public static final String CHAT_FORMAT = "chat.format";
+        public static final String SERVER_NAME = "description.server-name";
+        public static final String VERSION_COLOR = "description.server-name";
+        public static final String MOTD_LIST = "description.motds";
+
+    }
+
+    public static class Channels {
 
         public static final String ROOT = "channels";
 
     }
 
-    public class Titles {
+    public static class Titles {
 
         public static final String ROOT = "titles";
         public static final String DEFAULT_ID = "defaults.default-title.id";
@@ -18,7 +25,7 @@ public class ExtraPaths {
 
     }
 
-    public class User {
+    public static class User {
 
         public static final String NICKNAME = "extra.nickname";
         public static final String CHAT_COLOR = "extra.chat-color";
@@ -33,7 +40,7 @@ public class ExtraPaths {
 
     }
 
-    public class Discord {
+    public static class Discord {
 
         public static final String TOKEN = "discord.token";
         public static final String MAIN_CHANNEL = "discord.main-channel";

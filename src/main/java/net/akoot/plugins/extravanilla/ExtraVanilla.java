@@ -7,7 +7,9 @@ import net.akoot.plugins.extravanilla.serializable.Title;
 import net.akoot.plugins.ultravanilla.Config;
 import net.akoot.plugins.ultravanilla.Strings;
 import net.akoot.plugins.ultravanilla.UltraVanilla;
+import net.akoot.plugins.ultravanilla.reference.Palette;
 import net.akoot.plugins.ultravanilla.util.IOUtil;
+import net.akoot.plugins.ultravanilla.util.StringUtil;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +24,12 @@ public final class ExtraVanilla extends JavaPlugin {
     private Strings strings;
     private Config titles;
     private Config channels;
+
+    private String motd;
+
+    public String getMotd() {
+        return motd;
+    }
 
     public static ExtraVanilla getInstance() {
         return instance;
@@ -61,6 +69,10 @@ public final class ExtraVanilla extends JavaPlugin {
 
         // Copy defaults from the jar for config.yml if needed
         IOUtil.copyDefaults(new File(getDataFolder(), "config.yml"), getClass());
+
+        // Set the MOTD
+        List<String> motds = getConfig().getStringList(ExtraPaths.Config.MOTD_LIST);
+        motd = Palette.translate(StringUtil.pickRandom(motds));
 
         // Register titles
         titles = new Config(instance, getClass(), "titles.yml");

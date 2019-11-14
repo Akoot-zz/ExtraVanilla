@@ -5,6 +5,7 @@ import net.akoot.plugins.ultravanilla.Users;
 import net.akoot.plugins.ultravanilla.reference.UltraPaths;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,28 +14,63 @@ import java.util.List;
 
 public class ExtraUtil {
 
-    public static long getPlaytimeMillis(Player player) {
+    /**
+     * Get the total time a player has played in milliseconds
+     *
+     * @param player The player
+     * @return The number of milliseconds a player has played
+     */
+    public static long getPlaytimeMillis(OfflinePlayer player) {
         YamlConfiguration config = Users.getUser(player);
         long difference = System.currentTimeMillis() - config.getLong(UltraPaths.User.LAST_LEAVE, System.currentTimeMillis());
         return config.getLong(UltraPaths.User.PLAYTIME, 0L) + difference;
     }
 
-    public static long getPlaytimeSeconds(Player player) {
+    /**
+     * Get the total time a player has played in seconds
+     *
+     * @param player The player
+     * @return The number of seconds a player has played
+     */
+    public static long getPlaytimeSeconds(OfflinePlayer player) {
         return getPlaytimeMillis(player) / 1000L;
     }
 
-    public static long getPlaytimeTicks(Player player) {
+    /**
+     * Get the total time a player has played in in-game ticks
+     *
+     * @param player The player
+     * @return The number of ticks a player has played
+     */
+    public static long getPlaytimeTicks(OfflinePlayer player) {
         return getPlaytimeSeconds(player) * 20L;
     }
 
-    public static int getPlaytimeMinutes(Player player) {
+    /**
+     * Get the total time a player has played in minutes
+     *
+     * @param player The player
+     * @return The number of minutes a player has played
+     */
+    public static int getPlaytimeMinutes(OfflinePlayer player) {
         return (int) (getPlaytimeSeconds(player) / 60L);
     }
 
-    public static double getPlaytimeHours(Player player) {
+    /**
+     * Get the total time a player has played in hours
+     *
+     * @param player The player
+     * @return The number of hours a player has played
+     */
+    public static double getPlaytimeHours(OfflinePlayer player) {
         return getPlaytimeMinutes(player) / 60.0;
     }
 
+    /**
+     * Get the time in format dhms (days hours minutes seconds) Example: 1d2h
+     * @param milliseconds The time in milliseconds
+     * @return The time in format dmhs
+     */
     public static String getTimeString(long milliseconds) {
         long seconds = milliseconds / 1000L;
         if (seconds > 60) {
@@ -55,18 +91,37 @@ public class ExtraUtil {
         return seconds + "s";
     }
 
-    public static String getNickname(Player player) {
+    /**
+     * Get a player's nickname
+     *
+     * @param player The player
+     * @return The player's nickname, null if they don't have one
+     */
+    public static String getNickname(OfflinePlayer player) {
         return Users.getUser(player).getString(ExtraPaths.User.NICKNAME);
     }
 
-    public static boolean hasNickname(Player player) {
+    /**
+     * Check if a player has a nickname
+     *
+     * @param player The player
+     * @return Whether or not a player has a nickname
+     */
+    public static boolean hasNickname(OfflinePlayer player) {
         return getNickname(player) != null;
     }
 
+    /**
+     * Get a player from a username or alias or nickname
+     * @param search The search name
+     * @return A player if found, null if not
+     */
     public static Player getPlayer(String search) {
 
+        // Get the player using the Server
         Player player = Bukkit.getServer().getPlayer(search);
 
+        // If the search wasn't a username which was online, try matching it to the player's alias
         if (player == null) {
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                 for (String alias : getAliases(p)) {
@@ -80,12 +135,28 @@ public class ExtraUtil {
         return player;
     }
 
-    public static List<String> getAliases(Player player) {
+    /**
+     * Get the aliases of a player (not including username)
+     *
+     * @param player The player
+     * @return A list of aliases which belong to a player
+     */
+    public static List<String> getAliases(OfflinePlayer player) {
+
+        // Create an empty list of aliases
         List<String> aliases = new ArrayList<>();
+
+        // Get the "alias" and "nickname" from a player
         String alias = Users.getUser(player).getString(ExtraPaths.User.ALIAS);
         String nick = Users.getUser(player).getString(ExtraPaths.User.NICKNAME);
+
+        // Add the nickname to the alias list if the player has one
         if (nick != null) aliases.add(ChatColor.stripColor(nick));
+
+        // Add the alias to the alias list if the player has one
         if (alias != null) aliases.add(alias);
+
+        // Return the list
         return aliases;
     }
 }

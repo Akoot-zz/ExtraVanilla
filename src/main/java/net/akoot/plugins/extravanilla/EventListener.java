@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 
 public class EventListener implements Listener {
@@ -31,12 +32,11 @@ public class EventListener implements Listener {
 
         event.setMessage(message);
 
-        String nickname = config.getString(ExtraPaths.User.NICKNAME, player.getName()) + ChatColor.RESET;
         ChatColor nameColor = ChatColor.valueOf(config.getString(ExtraPaths.User.NAME_COLOR, "WHITE"));
         ChatColor chatColor = ChatColor.valueOf(config.getString(ExtraPaths.User.CHAT_COLOR, "WHITE"));
         Title title = Titles.getTitleOrDefault(config.getString(ExtraPaths.User.SELECTED_TITLE));
 
-        String format = plugin.getConfig().getString(ExtraPaths.CHAT_FORMAT, event.getFormat())
+        String format = plugin.getConfig().getString(ExtraPaths.Config.CHAT_FORMAT, event.getFormat())
                 .replaceAll("%t", title + "")
                 .replaceAll("&\\{name-color}", nameColor + "")
                 .replaceAll("%p", "%1\\$s")
@@ -46,6 +46,11 @@ public class EventListener implements Listener {
         format = Palette.translate(format);
 
         event.setFormat(format);
+    }
+
+    @EventHandler
+    public void onServerList(ServerListPingEvent event) {
+        event.setMotd(plugin.getMotd());
     }
 }
 

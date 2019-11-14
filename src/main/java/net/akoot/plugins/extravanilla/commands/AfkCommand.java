@@ -35,7 +35,7 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
                 Player player = (Player) sender;
                 toggleAFK(player);
             } else {
-                sender.sendMessage(uvStrings.getString("error.player-only"));
+                sender.sendMessage(playerOnly("toggle AFK modes"));
             }
         }
 
@@ -45,7 +45,7 @@ public class AfkCommand extends UltraCommand implements CommandExecutor, TabExec
             if (player != null) {
                 sender.sendMessage(query(player.getName(), isAFK(player)));
             } else {
-                sender.sendMessage(uvStrings.getString("error.player-offline"));
+                sender.sendMessage(playerOffline(args[0]));
             }
         } else {
             return false;

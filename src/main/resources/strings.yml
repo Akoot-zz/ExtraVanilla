@@ -1,4 +1,20 @@
 command:
+  homes:
+    message:
+      set:
+        main: "Home set!"
+        other: "Home &.%h&: set!"
+      unset:
+        main: "Home unset!"
+        other: "Home &.%h&: unset!"
+      list:
+        self:
+          title: "Your homes: "
+          item: "&.%h&:%, "
+        other:
+          title: "---------- &@%p's &:homes ----------\n"
+          item: "&.%h: &r%c\n"
+      chat: "&.%h: &:%c"
   alias:
     message:
       unset:
