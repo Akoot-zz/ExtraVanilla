@@ -109,6 +109,13 @@ public final class ExtraVanilla extends JavaPlugin {
         // Register /info command
         getCommand("info").setExecutor(new InfoCommand(instance, strings));
 
+        // Register /home, /homes, /delhome and /sethome
+        HomeCommand homeCommand = new HomeCommand(instance, strings);
+        getCommand("home").setExecutor(homeCommand);
+        getCommand("homes").setExecutor(homeCommand);
+        getCommand("delhome").setExecutor(homeCommand);
+        getCommand("sethome").setExecutor(homeCommand);
+
         // Register events
         getServer().getPluginManager().registerEvents(new EventListener(instance), instance);
 

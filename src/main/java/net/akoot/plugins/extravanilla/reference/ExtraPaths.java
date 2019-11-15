@@ -27,16 +27,18 @@ public class ExtraPaths {
 
     public static class User {
 
-        public static final String NICKNAME = "extra.nickname";
-        public static final String CHAT_COLOR = "extra.chat-color";
-        public static final String NAME_COLOR = "extra.name-color";
+        public static final String NICKNAME = "info.nickname";
+        public static final String CHAT_COLOR = "info.chat-color";
+        public static final String NAME_COLOR = "info.name-color";
 
-        public static final String UNLOCKED_TITLES = "extra.titles.unlocked";
-        public static final String SELECTED_TITLE = "extra.titles.selected";
+        public static final String UNLOCKED_TITLES = "data.titles.unlocked";
+        public static final String SELECTED_TITLE = "info.titles.selected";
 
-        public static final String AFK = "extra.afk";
+        public static final String AFK = "data.afk";
 
-        public static final String ALIAS = "extra.alias";
+        public static final String ALIAS = "info.alias";
+
+        public static final String HOMES = "data.homes";
 
     }
 

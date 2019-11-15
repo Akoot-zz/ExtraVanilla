@@ -8,6 +8,28 @@ authors: [Akoot_]
 description: Extra commands and features for UltraVanilla
 website: https://akoot.net/plugins/extravanilla
 commands:
+  home:
+    description: Teleport to your home
+    permission: extravanilla.command.home
+    usage: /home [home]
+  sethome:
+    description: Set a home to your current location
+    permission: extravanilla.command.sethome
+    usage: /sethome [home]
+  delhome:
+    description: Remove a home
+    permission: extravanilla.command.delhome
+    usage: /delhome [home]
+  homes:
+    description: Other stuff you can do with your homes
+    permission: extravanilla.command.homes
+    usage: |
+      /homes list [player]
+      /homes set [home]
+      /homes unset|remove|delete [home]
+      /homes coords [home]
+      /homes chat [home]
+      /homes msg <player> [home]
   alias:
     description: Add an alias to a player
     permission: extravanilla.command.alias
@@ -47,3 +69,4 @@ commands:
     usage: |
       /info <player>
       /info search <search>
+      
