@@ -1,4 +1,5 @@
 description:
+  motd-format: "%n %v\n%m"
   server-name: "&6&lUltra&r&fVanilla"
   version-color: WHITE
   motds:

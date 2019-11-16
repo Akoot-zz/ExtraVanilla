@@ -6,8 +6,9 @@ public class ExtraPaths {
 
         public static final String CHAT_FORMAT = "chat.format";
         public static final String SERVER_NAME = "description.server-name";
-        public static final String VERSION_COLOR = "description.server-name";
+        public static final String VERSION_COLOR = "description.version-color";
         public static final String MOTD_LIST = "description.motds";
+        public static final String MOTD_FORMAT = "description.motd-format";
 
     }
 

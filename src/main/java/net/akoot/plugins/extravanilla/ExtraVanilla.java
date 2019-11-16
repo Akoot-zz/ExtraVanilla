@@ -10,6 +10,7 @@ import net.akoot.plugins.ultravanilla.UltraVanilla;
 import net.akoot.plugins.ultravanilla.reference.Palette;
 import net.akoot.plugins.ultravanilla.util.IOUtil;
 import net.akoot.plugins.ultravanilla.util.StringUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -71,8 +72,12 @@ public final class ExtraVanilla extends JavaPlugin {
         IOUtil.copyDefaults(new File(getDataFolder(), "config.yml"), getClass());
 
         // Set the MOTD
-        List<String> motds = getConfig().getStringList(ExtraPaths.Config.MOTD_LIST);
-        motd = Palette.translate(StringUtil.pickRandom(motds));
+        String motd = StringUtil.pickRandom(getConfig().getStringList(ExtraPaths.Config.MOTD_LIST));
+        String serverName = getConfig().getString(ExtraPaths.Config.SERVER_NAME);
+        String version = ChatColor.valueOf(getConfig().getString(ExtraPaths.Config.VERSION_COLOR)) + getServer().getVersion();
+        version = version.substring(version.indexOf("MC: ") + 4, version.length() - 1);
+        String motdString = getConfig().getString(ExtraPaths.Config.MOTD_FORMAT).replace("%n", serverName);
+        this.motd = Palette.translate(motdString.replaceAll("%n", serverName).replaceAll("%v", version).replaceAll("%m", motd));
 
         // Register titles
         titles = new Config(instance, getClass(), "titles.yml");

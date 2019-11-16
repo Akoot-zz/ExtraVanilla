@@ -69,4 +69,3 @@ commands:
     usage: |
       /info <player>
       /info search <search>
-      

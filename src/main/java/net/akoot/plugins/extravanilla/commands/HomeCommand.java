@@ -115,7 +115,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
     private boolean handleHomes(CommandSender sender, String[] args) {
         if (args.length == 0) {
             if (sender instanceof Player) {
-                sender.sendMessage(listHomes((Player) sender));
+                sendHomeList((Player) sender, sender);
             } else {
                 sender.sendMessage(playerOnly("list your homes"));
             }
@@ -125,11 +125,11 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (args[0].equalsIgnoreCase("list")) {
-                    sender.sendMessage(listHomes(player));
+                    sendHomeList(player, sender);
                 } else {
                     Position home = getHomeAsPosition(player, "home");
                     if (home != null) {
-                        String coords = getCoordsString(player, home);
+                        String coords = getCoordsString(home);
                         if (args[0].equalsIgnoreCase("coords")) {
                             sender.sendMessage(coords);
                         } else if (args[0].equalsIgnoreCase("chat")) {
@@ -148,7 +148,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             if (args[0].equalsIgnoreCase("list")) {
                 OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(args[1]);
                 if (isValid(offlinePlayer)) {
-                    sender.sendMessage(listHomes(offlinePlayer));
+                    sendHomeList(offlinePlayer, sender);
                 } else {
                     sender.sendMessage(playerInvalid(args[1]));
                 }
@@ -164,9 +164,9 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                         Position home = getHomeAsPosition(player, args[1]);
                         if (home != null) {
                             if (args[0].equalsIgnoreCase("coords")) {
-                                player.sendMessage(getCoordsString(player, home));
+                                player.sendMessage(getCoordsString(home));
                             } else if (args[0].equalsIgnoreCase("chat")) {
-                                player.chat(ChatColor.stripColor(getCoordsString(player, home)));
+                                player.chat(ChatColor.stripColor(getCoordsString(home)));
                             }
                         }
                     }
@@ -199,7 +199,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             return true;
         }
         for (Player target : players) {
-            player.performCommand("msg " + target + " " + ChatColor.stripColor(getCoordsString(player, home)));
+            player.performCommand("msg " + target + " " + ChatColor.stripColor(getCoordsString(home)));
         }
         return false;
     }
@@ -250,17 +250,26 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
         return homes.get(home);
     }
 
-    private String listHomes(OfflinePlayer player) {
+    private void sendHomeList(OfflinePlayer player, CommandSender sender) {
+        String key = "list.player";
+        if (player == sender) {
+            key = "list.self";
+        }
         Map<String, Location> homes = getHomes(player);
         List<String> homeNames = new ArrayList<>();
         for (String homeName : homes.keySet()) {
-            String coords = Position.toStringTrimmed(homes.get(homeName));
-            homeNames.add(message("chat", "%h", homeName, "%c", coords));
+            homeNames.add(getCoordsString(player, homeName));
         }
-        return list("list.player", homeNames, "%p", player.getName());
+        sender.sendMessage(list(key, homeNames, "%p", player.getName()));
     }
 
-    private String getCoordsString(Player player, Position home) {
+    private String getCoordsString(OfflinePlayer player, String home) {
+        Location location = getHome(player, home);
+        String coords = Position.toStringTrimmed(location);
+        return message("chat", "%h", home, "%c", coords);
+    }
+
+    private String getCoordsString(Position home) {
         String coords = home.toStringTrimmed();
         return message("chat", "%h", home.getName(), "%c", coords);
     }
