@@ -1,4 +1,12 @@
 command:
+  spawn:
+    message:
+      teleport:
+        self: "Teleporting to spawn..."
+        player: "Teleporting &@%p &:to spawn..."
+      set: "Set spawn to %l"
+    error:
+      spawn-not-set: "Spawn is not set!"
   home:
     message:
       tp:

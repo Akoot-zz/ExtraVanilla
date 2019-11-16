@@ -3,6 +3,8 @@
     <words>
       <w>motd</w>
       <w>motds</w>
+      <w>setspawn</w>
+      <w>teleport</w>
     </words>
   </dictionary>
 </component>

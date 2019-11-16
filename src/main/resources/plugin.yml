@@ -69,3 +69,11 @@ commands:
     usage: |
       /info <player>
       /info search <search>
+  spawn:
+    description: Teleport to spawn
+    permission: extravanilla.command.spawn
+    usage: /spawn [players]
+  setspawn:
+    description: Set the spawn to your current position
+    permission: extravanilla.command.spawn.set
+    usage: /setspawn
