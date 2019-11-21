@@ -3,12 +3,14 @@ description:
   server-name: "&6&lUltra&r&fVanilla"
   version-color: WHITE
   motds:
-    - "Test"
-    - "Test 2"
-    - "Test 3"
-    - "Test 4"
+    - "We are testing!"
+    - "Testing testing..."
+    - "Today we are testing [REDACTED]"
+    - "test"
 chat:
   format: "&7[%t&7] &7<&r&{name-color}%p&7> &r&{chat-color}%m"
+max:
+  homes: 2
 defaults:
   default-title:
     id: default

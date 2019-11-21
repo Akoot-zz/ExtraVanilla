@@ -10,8 +10,12 @@ command:
   home:
     message:
       tp:
-        main: "Teleporting home..."
-        other: "Teleporting to &.%h&:..."
+        self:
+          main: "Teleporting home..."
+          other: "Teleporting to &.%h&:..."
+        player:
+          main: "Teleporting to &@%p's &:home..."
+          other: "Teleporting to &@%p's &:home &.%h&:..."
       set:
         main: "Home set!"
         other: "Home &.%h&: set!"
@@ -25,11 +29,14 @@ command:
         player:
           title: "---------- &@%p's &:homes ----------\n"
           item: "%v\n"
-      chat: "&.%h: &:%c"
+      chat: "&.%h &:%c"
     error:
       home-not-set:
-        main: "Home is not set! Set it with &>/sethome"
-        other: "Home &.%h&: is not set! Set it with &>/sethome %h"
+        self:
+          main: "Home is not set! Set it with &>/sethome"
+          other: "Home &.%h&: is not set! Set it with &>/sethome %h"
+        player:
+          other: "&@%p doesn't have a home called &.%h&:!"
   alias:
     message:
       unset:

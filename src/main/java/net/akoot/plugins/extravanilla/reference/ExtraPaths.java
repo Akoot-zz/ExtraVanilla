@@ -11,6 +11,7 @@ public class ExtraPaths {
         public static final String MOTD_FORMAT = "description.motd-format";
         public static final String SPAWN = "data.spawn";
 
+        public static final String MAX_HOMES = "max.homes";
     }
 
     public static class Channels {

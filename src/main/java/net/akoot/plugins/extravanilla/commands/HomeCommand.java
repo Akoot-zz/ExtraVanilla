@@ -5,6 +5,8 @@ import net.akoot.plugins.ultravanilla.Strings;
 import net.akoot.plugins.ultravanilla.Users;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.serializable.Position;
+import net.akoot.plugins.ultravanilla.util.RawComponent;
+import net.akoot.plugins.ultravanilla.util.RawMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -53,7 +55,8 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                 sender.sendMessage(message("set.main"));
             } else if (args.length == 1) {
                 int size = getHomes(player).size();
-                if (hasPermission(sender, "sethome." + size + 1)) {
+                int max = plugin.getConfig().getInt(ExtraPaths.Config.MAX_HOMES);
+                if ((size < max && hasPermission(sender, "set.max")) || hasPermission(sender, "set.unlimited")) {
                     String homeName = args[0];
                     setHome(player, player.getLocation(), homeName);
                     sender.sendMessage(message("set.other", "%h", homeName));
@@ -93,19 +96,33 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             if (args.length == 0) {
                 Location home = getHome(player, "home");
                 if (home != null) {
-                    sender.sendMessage(message("tp.main"));
+                    sender.sendMessage(message("tp.self.main"));
                     player.teleport(home);
                 } else {
-                    sender.sendMessage(error("home-not-set.main"));
+                    sender.sendMessage(error("home-not-set.self.main"));
                 }
             } else if (args.length == 1) {
                 String homeName = args[0];
                 Location home = getHome(player, homeName);
                 if (home != null) {
-                    sender.sendMessage(message("tp.other", "%h", homeName));
+                    sender.sendMessage(message("tp.self.other", "%h", homeName));
                     player.teleport(home);
                 } else {
-                    sender.sendMessage(error("home-not-set.other", "%h", homeName));
+                    sender.sendMessage(error("home-not-set.self.other", "%h", homeName));
+                }
+            } else if (args.length == 2) {
+                OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[1]);
+                if (isValid(target)) {
+                    String homeName = args[0];
+                    Location home = getHome(target, homeName);
+                    if (home != null) {
+                        sender.sendMessage(message("tp.player.other", "%h", homeName, "%p", target.getName()));
+                        player.teleport(home);
+                    } else {
+                        sender.sendMessage(error("home-not-set.player.other", "%h", homeName));
+                    }
+                } else {
+                    sender.sendMessage(playerInvalid(args[0]));
                 }
             }
         }
@@ -138,7 +155,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                             return false;
                         }
                     } else {
-                        sender.sendMessage(error("home-not-set.main"));
+                        sender.sendMessage(error("home-not-set.self.main"));
                     }
                 }
             } else {
@@ -180,7 +197,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                     Player player = (Player) sender;
                     Position home = getHomeAsPosition(player, args[2]);
                     if (home == null) {
-                        sender.sendMessage(error("home-not-set.other", "%h", args[2]));
+                        sender.sendMessage(error("home-not-set.self.other", "%h", args[2]));
                         return true;
                     }
                     if (messageHome(args[1], player, home)) return true;
@@ -220,6 +237,10 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
         for (Position position : positions) {
             homes.put(position.getName(), position.getLocation());
         }
+        Location bed = player.getBedSpawnLocation();
+        if (bed != null) {
+            homes.put("bed", bed);
+        }
         return homes;
     }
 
@@ -250,17 +271,30 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
         return homes.get(home);
     }
 
-    private void sendHomeList(OfflinePlayer player, CommandSender sender) {
-        String key = "list.player";
-        if (player == sender) {
-            key = "list.self";
+    private void sendHomeList(OfflinePlayer target, CommandSender sender) {
+        boolean isSelf = target == sender;
+        String key = String.format("list.%s", isSelf ? "self" : "player");
+        Map<String, Location> homes = getHomes(target);
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            sender.sendMessage(message(key + ".title", "%p", target.getName()));
+            RawMessage message = new RawMessage();
+            for (String homeName : homes.keySet()) {
+                String coordsString = message(key + ".item", "%v", getCoordsString(target, homeName));
+                RawComponent component = new RawComponent(coordsString);
+                component.setCommand("/home " + homeName + (isSelf ? "" : " " + target.getName()));
+                message.addComponent(component);
+            }
+            message.trimLast(1);
+            message.send(player);
+        } else {
+            List<String> homeNames = new ArrayList<>();
+            for (String homeName : homes.keySet()) {
+                homeNames.add(getCoordsString(target, homeName));
+            }
+            sender.sendMessage(list(key, homeNames, "%p", target.getName()));
         }
-        Map<String, Location> homes = getHomes(player);
-        List<String> homeNames = new ArrayList<>();
-        for (String homeName : homes.keySet()) {
-            homeNames.add(getCoordsString(player, homeName));
-        }
-        sender.sendMessage(list(key, homeNames, "%p", player.getName()));
     }
 
     private String getCoordsString(OfflinePlayer player, String home) {
