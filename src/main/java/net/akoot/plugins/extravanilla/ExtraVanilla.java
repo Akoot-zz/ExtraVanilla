@@ -2,29 +2,20 @@ package net.akoot.plugins.extravanilla;
 
 import net.akoot.plugins.extravanilla.commands.*;
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
-import net.akoot.plugins.extravanilla.serializable.Channel;
 import net.akoot.plugins.extravanilla.serializable.Title;
 import net.akoot.plugins.ultravanilla.Config;
-import net.akoot.plugins.ultravanilla.Strings;
-import net.akoot.plugins.ultravanilla.UltraVanilla;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.reference.Palette;
-import net.akoot.plugins.ultravanilla.util.IOUtil;
 import net.akoot.plugins.ultravanilla.util.StringUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ExtraVanilla extends JavaPlugin {
+public final class ExtraVanilla extends UltraPlugin {
 
-    private static ExtraVanilla instance;
-    private UltraVanilla ultraVanilla;
-    private Strings strings;
-    private Config titles;
-    private Config channels;
+    private static Config titles;
+    private static Config config;
 
     private String motd;
 
@@ -32,44 +23,25 @@ public final class ExtraVanilla extends JavaPlugin {
         return motd;
     }
 
-    public static ExtraVanilla getInstance() {
-        return instance;
-    }
-
-    public UltraVanilla getUltraVanilla() {
-        return ultraVanilla;
-    }
-
-    public Strings getStrings() {
-        return strings;
-    }
-
-    public Config getTitles() {
+    public static Config getTitles() {
         return titles;
     }
 
-    public Config getChannels() {
-        return channels;
+    public static Config config() {
+        return config;
     }
 
     @Override
-    public void onEnable() {
-
-        // Set the instance for getInstance()
-        instance = this;
+    public void start() {
 
         // Register serializable classes
-        ConfigurationSerialization.registerClass(Title.class);
-        ConfigurationSerialization.registerClass(Channel.class);
-
-        // Create directories
-        getDataFolder().mkdirs();
-
-        // Register strings instance for this plugin
-        strings = new Strings(instance, getClass());
+        serialize(Title.class, "title");
 
         // Copy defaults from the jar for config.yml if needed
-        IOUtil.copyDefaults(new File(getDataFolder(), "config.yml"), getClass());
+        copyDefaults("config.yml");
+
+        // Register config
+        config = new Config(this, getClass(), "config.yml");
 
         // Set the MOTD
         String motd = StringUtil.pickRandom(getConfig().getStringList(ExtraPaths.Config.MOTD_LIST));
@@ -80,56 +52,45 @@ public final class ExtraVanilla extends JavaPlugin {
         this.motd = Palette.translate(motdString.replaceAll("%n", serverName).replaceAll("%v", version).replaceAll("%m", motd));
 
         // Register titles
-        titles = new Config(instance, getClass(), "titles.yml");
+        titles = new Config(this, getClass(), "titles.yml");
         Titles.setTitles((List<Title>) titles.getConfig().getList(ExtraPaths.Titles.ROOT, new ArrayList<>()));
 
-        // Register channels
-        channels = new Config(instance, getClass(), "channels.yml");
-
-        // Get the UltraVanilla plugin instance, disable this plugin otherwise
-        ultraVanilla = (UltraVanilla) getServer().getPluginManager().getPlugin("UltraVanilla");
-        if (ultraVanilla != null) {
-            getLogger().info("Hooked to " + ultraVanilla.getDescription().getFullName() + "!");
-        } else {
-            getLogger().severe("Could not hook to UltraVanilla jar, disabling.");
-            getServer().getPluginManager().disablePlugin(instance);
-        }
+        // Register configs
+        registerConfig(titles);
+        registerConfig(config);
 
         // Register /extravanilla command
-        getCommand("extravanilla").setExecutor(new ExtravanillaCommand(instance, strings));
-
-        // Register /channel command
-        getCommand("channel").setExecutor(new ChannelCommand(instance, strings));
+        registerCommand("extravanilla", new ExtravanillaCommand(this));
 
         // Register /titles command
-        getCommand("title").setExecutor(new TitleCommand(instance, strings));
+        registerCommand("title", new TitleCommand(this));
 
         // Register /afk command
-        AfkCommand afkCommand = new AfkCommand(instance, strings);
-        getCommand("afk").setExecutor(afkCommand);
+        AfkCommand afkCommand = new AfkCommand(this);
+        registerCommand("afk", afkCommand);
 
         // Register /alias command
-        getCommand("alias").setExecutor(new AliasCommand(instance, strings));
+        registerCommand("alias", new AliasCommand(this));
 
         // Register /info command
-        getCommand("info").setExecutor(new InfoCommand(instance, strings));
+        registerCommand("info", new InfoCommand(this));
 
         // Register /home, /homes, /delhome and /sethome
-        HomeCommand homeCommand = new HomeCommand(instance, strings);
-        getCommand("home").setExecutor(homeCommand);
-        getCommand("homes").setExecutor(homeCommand);
-        getCommand("delhome").setExecutor(homeCommand);
-        getCommand("sethome").setExecutor(homeCommand);
+        HomeCommand homeCommand = new HomeCommand(this);
+        registerCommand("home", homeCommand);
+        registerCommand("homes", homeCommand);
+        registerCommand("delhome", homeCommand);
+        registerCommand("sethome", homeCommand);
 
         // Register /spawn
-        SpawnCommand spawnCommand = new SpawnCommand(instance, strings);
-        getCommand("spawn").setExecutor(spawnCommand);
-        getCommand("setspawn").setExecutor(spawnCommand);
+        SpawnCommand spawnCommand = new SpawnCommand(this);
+        registerCommand("spawn", spawnCommand);
+        registerCommand("setspawn", spawnCommand);
 
         // Register events
-        getServer().getPluginManager().registerEvents(new EventListener(instance), instance);
+        registerEvents(new EventListener(this));
 
-        getServer().getPluginManager().registerEvents(afkCommand, instance);
+        registerEvents(afkCommand);
     }
 
     @Override

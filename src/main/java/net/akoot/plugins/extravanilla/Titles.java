@@ -25,8 +25,8 @@ public class Titles {
      */
     public static Title getDefaultTitle() {
         return new Title(
-                ExtraVanilla.getInstance().getConfig().getString(ExtraPaths.Titles.DEFAULT_ID),
-                ExtraVanilla.getInstance().getConfig().getString(ExtraPaths.Titles.DEFAULT_NAME),
+                ExtraVanilla.config().getConfig().getString(ExtraPaths.Titles.DEFAULT_ID),
+                ExtraVanilla.config().getConfig().getString(ExtraPaths.Titles.DEFAULT_NAME),
                 Title.Rarity.COMMON);
     }
 
@@ -57,8 +57,8 @@ public class Titles {
      * Save the titles to titles.yml
      */
     public static void save() {
-        ExtraVanilla.getInstance().getTitles().getConfig().set(ExtraPaths.Titles.ROOT, titles);
-        ExtraVanilla.getInstance().getTitles().saveConfig();
+        ExtraVanilla.getTitles().getConfig().set(ExtraPaths.Titles.ROOT, titles);
+        ExtraVanilla.getTitles().saveConfig();
     }
 
     /**

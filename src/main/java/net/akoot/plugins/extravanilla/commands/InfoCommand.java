@@ -2,7 +2,7 @@ package net.akoot.plugins.extravanilla.commands;
 
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
 import net.akoot.plugins.extravanilla.util.ExtraUtil;
-import net.akoot.plugins.ultravanilla.Strings;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.Users;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.reference.Palette;
@@ -15,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +23,8 @@ import java.util.Map;
 
 public class InfoCommand extends UltraCommand implements CommandExecutor, TabExecutor {
 
-    public InfoCommand(JavaPlugin instance, Strings strings) {
-        super(instance, strings, ChatColor.WHITE);
+    public InfoCommand(UltraPlugin instance) {
+        super(instance, ChatColor.WHITE);
     }
 
     @Override

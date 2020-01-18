@@ -45,11 +45,6 @@ commands:
     description: Base ExtraVanilla command
     permission: extravanilla.command.extravanilla
     usage: /ev reload
-  channel:
-    description: Create, edit, and delete channels
-    permission: extravanilla.command.channel
-    usage: |
-      /channel
   title:
     description: Create, edit, select, and delete titles
     permission: extravanilla.command.titles

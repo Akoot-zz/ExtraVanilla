@@ -1,4 +1,9 @@
 command:
+  info:
+    message:
+      info:
+        title: "---------- @p's &:info ----------"
+        item: "%v\n"
   spawn:
     message:
       teleport:

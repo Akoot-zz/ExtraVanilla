@@ -2,7 +2,7 @@ package net.akoot.plugins.extravanilla.commands;
 
 import net.akoot.plugins.extravanilla.Titles;
 import net.akoot.plugins.extravanilla.serializable.Title;
-import net.akoot.plugins.ultravanilla.Strings;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.util.StringUtil;
 import org.bukkit.ChatColor;
@@ -12,15 +12,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TitleCommand extends UltraCommand implements CommandExecutor, TabCompleter {
 
-    public TitleCommand(JavaPlugin plugin, Strings strings) {
-        super(plugin, strings, ChatColor.GRAY);
+    public TitleCommand(UltraPlugin plugin) {
+        super(plugin, ChatColor.GRAY);
     }
 
     @Override

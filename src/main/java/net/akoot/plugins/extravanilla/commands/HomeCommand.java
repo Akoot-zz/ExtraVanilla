@@ -1,7 +1,7 @@
 package net.akoot.plugins.extravanilla.commands;
 
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
-import net.akoot.plugins.ultravanilla.Strings;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.Users;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.serializable.Position;
@@ -15,7 +15,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +23,8 @@ import java.util.Map;
 
 public class HomeCommand extends UltraCommand implements CommandExecutor, TabExecutor {
 
-    public HomeCommand(JavaPlugin instance, Strings strings) {
-        super(instance, strings, ChatColor.GRAY);
+    public HomeCommand(UltraPlugin instance) {
+        super(instance, ChatColor.GRAY);
     }
 
     @Override
@@ -42,9 +41,37 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                 return handleDelHome(sender, args);
             case "sethome":
                 return handleSetHome(sender, args);
+            case "homeof":
+                return handleHomeOf(sender, args);
         }
 
         return false;
+    }
+
+    private boolean handleHomeOf(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+
+            Player player = (Player) sender;
+            Player target = plugin.getServer().getPlayer(args[0]);
+
+            boolean homeSpecified = args.length == 2;
+
+            if (target == null) {
+                return true;
+            }
+
+            Location home = getHome(target, homeSpecified ? args[1] : "home");
+            if (home == null) {
+                return true;
+            }
+
+            player.teleport(home);
+            sender.sendMessage(homeSpecified ? message("tp.player.other", "%h", args[1]) : message("tp.player.home"));
+
+        } else {
+            sender.sendMessage(playerOnly("teleport to someone's home"));
+        }
+        return true;
     }
 
     private boolean handleSetHome(CommandSender sender, String[] args) {
@@ -216,7 +243,9 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             return true;
         }
         for (Player target : players) {
-            player.performCommand("msg " + target + " " + ChatColor.stripColor(getCoordsString(home)));
+            String command = "[" + "msg " + target.getName() + " " + ChatColor.stripColor(getCoordsString(home)) + "]";
+            System.out.println(command);
+            player.performCommand("msg " + target.getName() + " " + ChatColor.stripColor(getCoordsString(home)));
         }
         return false;
     }
@@ -335,8 +364,8 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                     suggestions.addAll(getHomes((Player) sender).keySet());
                 }
             } else if (args.length == 3) {
-                if (args[1].equalsIgnoreCase("msg")) {
-                    if (plugin.getServer().getPlayer(args[1]) != null) {
+                if (args[0].equalsIgnoreCase("msg")) {
+                    if (getPlayers(args[1]).isEmpty()) {
                         suggestions.addAll(getHomes((Player) sender).keySet());
                     }
                 }

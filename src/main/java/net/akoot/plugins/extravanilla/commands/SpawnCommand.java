@@ -1,7 +1,7 @@
 package net.akoot.plugins.extravanilla.commands;
 
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
-import net.akoot.plugins.ultravanilla.Strings;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import net.akoot.plugins.ultravanilla.serializable.Position;
 import org.bukkit.ChatColor;
@@ -11,15 +11,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
 
 public class SpawnCommand extends UltraCommand implements CommandExecutor, TabExecutor {
 
-    public SpawnCommand(JavaPlugin instance, Strings strings) {
-        super(instance, strings, ChatColor.GREEN);
+    public SpawnCommand(UltraPlugin instance) {
+        super(instance, ChatColor.GREEN);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.akoot.plugins.extravanilla.commands;
 
 import net.akoot.plugins.extravanilla.reference.ExtraPaths;
-import net.akoot.plugins.ultravanilla.Strings;
+import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.Users;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import org.bukkit.ChatColor;
@@ -13,14 +13,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public class AfkCommand extends UltraCommand implements CommandExecutor, TabExecutor, Listener {
 
-    public AfkCommand(JavaPlugin instance, Strings strings) {
-        super(instance, strings, ChatColor.GRAY);
+    public AfkCommand(UltraPlugin instance) {
+        super(instance, ChatColor.GRAY);
     }
 
     @Override
