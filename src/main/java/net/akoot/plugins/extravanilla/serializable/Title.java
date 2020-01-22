@@ -83,13 +83,15 @@ public class Title implements ConfigurationSerializable, Comparable {
         UNCOMMON(ChatColor.DARK_GREEN, 2),
         RARE(ChatColor.LIGHT_PURPLE, 3),
         EPIC(ChatColor.RED, 4),
-        LEGENDARY(ChatColor.GOLD, 5);
+        LEGENDARY(ChatColor.GOLD, 5),
+        STAFF(ChatColor.DARK_RED, 6);
 
         private ChatColor color;
         private int ranking;
 
-        Rarity(ChatColor color, int Ranking) {
+        Rarity(ChatColor color, int ranking) {
             this.color = color;
+            this.ranking = ranking;
         }
 
         public int getRanking() {

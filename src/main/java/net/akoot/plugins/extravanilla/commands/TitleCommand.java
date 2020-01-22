@@ -282,9 +282,10 @@ public class TitleCommand extends UltraCommand implements CommandExecutor, TabCo
                     }
 
                     // Set the title's name
+                    Title oldTitle = title;
                     title.setName(newName);
                     Titles.save();
-                    sender.sendMessage(message("modify.name", "%t", title.toString()));
+                    sender.sendMessage(message("modify.name", "%t1", oldTitle.getName(), "%t2", title.getName()));
                 } else {
                     sender.sendMessage(uvStrings.getString("error.no-permission", "%a", "modify titles"));
                 }

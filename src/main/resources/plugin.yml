@@ -72,3 +72,12 @@ commands:
     description: Set the spawn to your current position
     permission: extravanilla.command.spawn.set
     usage: /setspawn
+  lag:
+    description: Show lag info about the server and yourself
+    permission: extravanilla.command.lag
+    usage: /lag
+  nickname:
+    description: Change your nickname
+    aliases: [nick]
+    permission: extravanilla.command.nickname
+    usage: /nick [player] <name>

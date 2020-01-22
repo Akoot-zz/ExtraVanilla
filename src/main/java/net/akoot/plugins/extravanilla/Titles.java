@@ -33,7 +33,7 @@ public class Titles {
     /**
      * Add a title to the list
      *
-     * @param title
+     * @param title The title to add
      */
     public static void add(Title title) {
         titles.add(title);
@@ -43,7 +43,7 @@ public class Titles {
     /**
      * Remove a title from the list, also remove it from all players
      *
-     * @param title
+     * @param title The title to delete
      */
     public static void delete(Title title) {
         titles.remove(title);
@@ -80,7 +80,8 @@ public class Titles {
 
     /**
      * Get a list of IDs from all of the titles in memory
-     * @return
+     *
+     * @return A list containing the IDs of all the titles in memory
      */
     public static List<String> listIds() {
         List<String> list = new ArrayList<>();
@@ -149,8 +150,8 @@ public class Titles {
 
     /**
      * Remove a title from a player
-     * @param player
-     * @param id
+     * @param player The player
+     * @param id The ID of the title to remove from the player
      */
     public static void remove(OfflinePlayer player, String id) {
         if (hasTitle(player, id)) {
@@ -204,9 +205,9 @@ public class Titles {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Get a list of titles a player owns
+     * @param player The player to get titles from
+     * @return A list of Titles that belong to a player
      */
     public static List<Title> getTitles(OfflinePlayer player) {
         List<Title> unlockedTitles = new ArrayList<>();
@@ -244,7 +245,7 @@ public class Titles {
     /**
      * Check if a title ID is valid
      * @param id The title ID
-     * @return Wether or not the title ID is valid
+     * @return Whether or not the title ID is valid
      */
     public static boolean exists(String id) {
         for (Title title : titles) {
@@ -259,7 +260,7 @@ public class Titles {
      * Check if a player has the title unlocked
      * @param player The player
      * @param id The ID
-     * @return Wether or not a player has the title unlocked
+     * @return Whether or not a player has the title unlocked
      */
     public static boolean hasTitle(OfflinePlayer player, String id) {
         for (Title title : getTitles(player)) {

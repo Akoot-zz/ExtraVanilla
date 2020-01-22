@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -28,98 +29,90 @@ public class AliasCommand extends UltraCommand implements CommandExecutor, TabEx
         // no args
         if (args.length == 0) {
             if (sender instanceof Player) {
-                String alias = Users.getUser((Player) sender).getString(ExtraPaths.User.ALIAS);
-                if (alias != null) {
-                    sender.sendMessage(message("query.self", "%a", alias));
-                } else {
-                    sender.sendMessage(error("no-alias.self"));
-                }
+                Player player = (Player) sender;
+                List<String> aliases = Users.getUser(player).getStringList(ExtraPaths.User.ALIASES);
+                sender.sendMessage(list("query.self", aliases));
             } else {
-                sender.sendMessage(uvStrings.getString("error.player-only", "%a", "set your alias"));
+                sender.sendMessage(playerOnly("set your alias"));
             }
         }
 
         // <player>
         else if (args.length == 1) {
 
-            if (args[0].equalsIgnoreCase("unset")) {
-                if (sender instanceof Player) {
-                    Users.set((Player) sender, ExtraPaths.User.ALIAS, null);
-                    sender.sendMessage(message("unset.self"));
-                } else {
-                    sender.sendMessage(uvStrings.getString("error.player-only", "%a", "set your alias"));
-                }
-                return true;
-            }
-
             OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[0]);
             if (isValid(player)) {
-                String alias = Users.getUser((Player) sender).getString(ExtraPaths.User.ALIAS);
-                if (alias != null) {
-                    sender.sendMessage(message("query.other", "%p", player.getName(), "%a", alias));
+                List<String> aliases = Users.getUser(player).getStringList(ExtraPaths.User.ALIASES);
+                sender.sendMessage(list("query.other", aliases, "%p", player.getName()));
+            } else {
+                sender.sendMessage(playerInvalid(args[0]));
+            }
+
+        }
+
+        /*
+        add <alias>
+        remove <alias>
+         */
+        else if (args.length == 2) {
+
+            if (sender instanceof Player) {
+                if (hasPermission(sender, "modify.self")) {
+                    return modifyAlias(sender, (Player) sender, args[1], args[0]);
                 } else {
-                    sender.sendMessage(error("no-alias.other", "%p", player.getName()));
+                    sender.sendMessage(noPermission("modify your aliases"));
                 }
             } else {
-                sender.sendMessage(uvStrings.getString("error.player-unknown", "%p", args[0]));
+                sender.sendMessage(playerOnly("modify your aliases"));
             }
         }
 
         /*
-         set <alias>
-         unset <player>
+        add <player> <alias>
+        remove <player> <alias>
          */
-        else if (args.length == 2) {
+        else if (args.length == 3) {
 
-            // set <alias>
-            if (args[0].equalsIgnoreCase("set")) {
-                if (sender instanceof Player) {
-                    Player player = (Player) sender;
-                    String alias = args[1];
-                    Users.set(player, ExtraPaths.User.ALIAS, alias);
-                    sender.sendMessage(message("set.self", "%a", alias));
-                } else {
-                    sender.sendMessage(uvStrings.getString("error.player-only", "%a", "set your alias"));
-                }
-            }
+            OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
 
-            // unset <player>
-            else if (args[0].equalsIgnoreCase("unset")) {
-                if (hasPermission(sender, "modify")) {
-                    OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
-                    if (isValid(player)) {
-                        Users.set(player, ExtraPaths.User.ALIAS, null);
-                        sender.sendMessage(message("unset.other" +
-                                "", "%p", player.getName()));
-                    } else {
-                        sender.sendMessage(uvStrings.getString("error.player-unknown", "%p", args[1]));
-                    }
+            if (isValid(player)) {
+                if (hasPermission(sender, "modify.other")) {
+                    return modifyAlias(sender, player, args[2], args[0]);
                 } else {
-                    sender.sendMessage(uvStrings.getString("no-permission", "%a", "modify aliases for others"));
+                    sender.sendMessage(noPermission("modify someone else's aliases"));
                 }
+            } else {
+                sender.sendMessage(playerInvalid(args[1]));
             }
         }
 
-        // set <player> <alias>
-        else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("set")) {
-                if (hasPermission(sender, "modify")) {
-                    OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
-                    if (isValid(player)) {
-                        String alias = args[2];
-                        Users.set(player, ExtraPaths.User.ALIAS, alias);
-                        sender.sendMessage(message("set.other", "%p", player.getName(), "%a", alias));
-                    } else {
-                        sender.sendMessage(uvStrings.getString("error.player-unknown", "%p", args[1]));
-                    }
-                } else {
-                    sender.sendMessage(uvStrings.getString("no-permission", "%a", "modify aliases for others"));
-                }
+        return true;
+    }
+
+    private boolean modifyAlias(CommandSender sender, OfflinePlayer player, String alias, String subCommand) {
+        YamlConfiguration config = Users.getUser(player);
+        List<String> aliases = config.getStringList(ExtraPaths.User.ALIASES);
+        if (subCommand.equalsIgnoreCase("add")) {
+            if (!aliases.contains(alias)) {
+                aliases.add(alias);
+                sender.sendMessage(message("modify.add", "%p", player.getName(), "%a", alias));
+            } else {
+                sender.sendMessage(error("alias-exists", "%p", player.getName(), "%a", alias));
+                return true;
+            }
+        } else if (subCommand.equalsIgnoreCase("remove")) {
+            if (aliases.contains(alias)) {
+                aliases.remove(alias);
+                sender.sendMessage(message("modify.remove", "%p", player.getName(), "%a", alias));
+            } else {
+                sender.sendMessage(error("alias-unknown", "%p", player.getName(), "%a", alias));
+                return true;
             }
         } else {
             return false;
         }
-
+        config.set(ExtraPaths.User.ALIASES, aliases);
+        Users.saveUser(player);
         return true;
     }
 

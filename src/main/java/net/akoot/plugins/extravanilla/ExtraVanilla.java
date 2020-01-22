@@ -87,6 +87,14 @@ public final class ExtraVanilla extends UltraPlugin {
         registerCommand("spawn", spawnCommand);
         registerCommand("setspawn", spawnCommand);
 
+        // Register /lag
+        registerCommand("lag", new LagCommand(this));
+
+        // Register /nickname
+        NicknameCommand nicknameCommand = new NicknameCommand(this);
+        registerCommand("nickname", nicknameCommand);
+        registerEvents(nicknameCommand);
+
         // Register events
         registerEvents(new EventListener(this));
 

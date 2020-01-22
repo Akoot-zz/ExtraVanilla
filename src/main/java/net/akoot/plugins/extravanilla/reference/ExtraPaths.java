@@ -39,7 +39,7 @@ public class ExtraPaths {
 
         public static final String AFK = "data.afk";
 
-        public static final String ALIAS = "info.alias";
+        public static final String ALIASES = "info.alias";
 
         public static final String HOMES = "data.homes";
 

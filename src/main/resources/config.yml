@@ -13,5 +13,5 @@ max:
   homes: 2
 defaults:
   default-title:
-    id: default
+    id: guest
     name: "Guest"

@@ -1,8 +1,18 @@
 command:
+  nickname:
+    message:
+      set:
+        self: "Set your nickname to: &r%n"
+        other: "Set &@%p&:'s nickname to: &r%n"
+  lag:
+    message:
+      tps: "TPS (1m, 5m, 15m): &.%t1m %t5m %t15m"
+      ping: "Ping: &.%v"
   info:
+    item-format: "%k: &.%v"
     message:
       info:
-        title: "---------- @p's &:info ----------"
+        title: "---------- &@%p's &:info ----------\n"
         item: "%v\n"
   spawn:
     message:
@@ -44,19 +54,19 @@ command:
           other: "&@%p doesn't have a home called &.%h&:!"
   alias:
     message:
-      unset:
-        self: "Unset your alias"
-        other: "Unset &@%p's &:alias"
-      set:
-        self: "Set your alias to &.%a"
-        other: "Set &@%p's &:alias to &.%a"
       query:
-        self: "Your alias is '&.%a&:'"
-        other: "&@%p's &:alias is '&.%a&:'"
+        self:
+          title: "Your aliases: "
+          item: "&.%v&:%, "
+        other:
+          title: "&@%p&:'s &:aliases: "
+          item: "&.%v&:%, "
+      modify:
+        add: "Added '&.%a&:' as an alias for &@%p"
+        remove: "Removed '&.%a&:' as an alias for &@%p"
     error:
-      no-alias:
-        self: "You don't have an alias"
-        other: "&@%p &:doesn't have an alias"
+      alias-unknown: "&wAlias '&.%a&w' does not belong to &@%p"
+      alias-exists: "&wAlias '&.%a&w' already exists for &@%p"
   afk:
     prefix: "[AFK] "
     message: "&@%p &:is %s &.AFK"

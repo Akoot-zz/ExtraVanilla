@@ -1,6 +1,5 @@
 package net.akoot.plugins.extravanilla.commands;
 
-import net.akoot.plugins.ultravanilla.Strings;
 import net.akoot.plugins.ultravanilla.UltraPlugin;
 import net.akoot.plugins.ultravanilla.commands.UltraCommand;
 import org.bukkit.ChatColor;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class TemplateCommand extends UltraCommand implements CommandExecutor, TabExecutor {
 
-    public TemplateCommand(UltraPlugin instance, Strings strings) {
+    public TemplateCommand(UltraPlugin instance) {
         super(instance, ChatColor.WHITE);
     }
 

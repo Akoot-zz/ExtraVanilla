@@ -53,7 +53,7 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
                 for (Player player : plugin.getServer().getOnlinePlayers()) {
                     String username = player.getName();
                     String displayName = ChatColor.stripColor(player.getDisplayName());
-                    String alias = Users.getUser(player).getString(ExtraPaths.User.ALIAS);
+                    String alias = Users.getUser(player).getString(ExtraPaths.User.ALIASES);
                     List<String> pastNames = Users.getUser(player).getStringList(UltraPaths.User.PAST_NAMES);
                     if (username.toLowerCase().contains(search.toLowerCase())) {
                         results.add(username.replace(search, Palette.TRUE + search + color));
@@ -103,7 +103,7 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
         YamlConfiguration user = Users.getUser(player);
 
         // Username
-        info.put("Username", player.getName());
+        info.put("Usernames", user.getStringList(UltraPaths.User.PAST_NAMES).toString());
 
         // Nickname
         String nickname = user.getString(ExtraPaths.User.NICKNAME);
@@ -111,9 +111,9 @@ public class InfoCommand extends UltraCommand implements CommandExecutor, TabExe
             info.put("Nickname", nickname);
 
         // Aliases
-        List<String> aliases = ExtraUtil.getAliases(player);
+        List<String> aliases = user.getStringList(ExtraPaths.User.ALIASES);
         if (!aliases.isEmpty())
-            info.put("Also known as", String.join(", ", aliases));
+            info.put("Aliases", String.join(", ", aliases));
 
         // Playtime
         info.put("Playtime", ExtraUtil.getTimeString(ExtraUtil.getPlaytimeMillis(player)));

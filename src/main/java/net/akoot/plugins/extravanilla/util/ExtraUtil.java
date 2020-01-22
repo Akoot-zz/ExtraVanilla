@@ -9,7 +9,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExtraUtil {
@@ -143,18 +142,15 @@ public class ExtraUtil {
      */
     public static List<String> getAliases(OfflinePlayer player) {
 
-        // Create an empty list of aliases
-        List<String> aliases = new ArrayList<>();
-
         // Get the "alias" and "nickname" from a player
-        String alias = Users.getUser(player).getString(ExtraPaths.User.ALIAS);
+        List<String> aliases = Users.getUser(player).getStringList(ExtraPaths.User.ALIASES);
         String nick = Users.getUser(player).getString(ExtraPaths.User.NICKNAME);
 
         // Add the nickname to the alias list if the player has one
         if (nick != null) aliases.add(ChatColor.stripColor(nick));
 
-        // Add the alias to the alias list if the player has one
-        if (alias != null) aliases.add(alias);
+        // Add the username
+        aliases.add(player.getName());
 
         // Return the list
         return aliases;
