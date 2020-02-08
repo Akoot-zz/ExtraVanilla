@@ -1,7 +1,7 @@
 name: ExtraVanilla
 version: ${project.version}
 main: net.akoot.plugins.extravanilla.ExtraVanilla
-api-version: 1.13
+api-version: 1.15
 prefix: EV
 depend: [UltraVanilla]
 authors: [Akoot_]
@@ -27,9 +27,13 @@ commands:
       /homes list [player]
       /homes set [home]
       /homes unset|remove|delete [home]
-      /homes coords [home]
+      /homes coordinates [home]
       /homes chat [home]
-      /homes msg <player> [home]
+      /homes whisper <player> [home]
+  homeof:
+    description: Teleport to another player's home
+    permission: extravanilla.command.homeof
+    usage: /homeof <player> [home]
   alias:
     description: Add an alias to a player
     permission: extravanilla.command.alias
@@ -81,3 +85,13 @@ commands:
     aliases: [nick]
     permission: extravanilla.command.nickname
     usage: /nick [player] <name>
+  namecolor:
+    description: Change your name color
+    aliases: [nc]
+    permission: extravanilla.command.namecolor
+    usage: /nc [player] <color>
+  chatcolor:
+    description: Change your chat color
+    aliases: [cc]
+    permission: extravanilla.command.chatcolor
+    usage: /cc [player] <color>

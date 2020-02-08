@@ -29,11 +29,7 @@ public class LagCommand extends UltraCommand implements CommandExecutor, TabExec
             String tps15m = String.format("%.1f", tps[2]);
             sender.sendMessage(message("tps", "%t1m", tps1m, "%t5m", tps5m, "%t15m", tps15m));
 
-            //TODO: figure out ping
-//            if(sender instanceof Player) {
-//                String ping  = "";
-//                sender.sendMessage(message("ping", "%v", ping));
-//            }
+//            TODO: figure out ping
             return true;
         }
 

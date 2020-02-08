@@ -1,9 +1,22 @@
 command:
+  chatcolor:
+    message:
+      reset: "Reset your chat color"
+      set:
+        self: "Set your chat color to: %c"
+        other: "Set &@%p&:'s chat color to %c"
+  namecolor:
+    message:
+      reset: "Reset your name color"
+      set:
+        self: "Set your name color to: %c"
+        other: "Set &@%p&:'s name color to %c"
   nickname:
     message:
       set:
         self: "Set your nickname to: &r%n"
         other: "Set &@%p&:'s nickname to: &r%n"
+      clear: "Cleared your nickname"
   lag:
     message:
       tps: "TPS (1m, 5m, 15m): &.%t1m %t5m %t15m"

@@ -21,8 +21,7 @@ public class ExtraUtil {
      */
     public static long getPlaytimeMillis(OfflinePlayer player) {
         YamlConfiguration config = Users.getUser(player);
-        long difference = System.currentTimeMillis() - config.getLong(UltraPaths.User.LAST_LEAVE, System.currentTimeMillis());
-        return config.getLong(UltraPaths.User.PLAYTIME, 0L) + difference;
+        return config.getLong(UltraPaths.User.PLAYTIME, 0L);
     }
 
     /**

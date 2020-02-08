@@ -62,11 +62,12 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
 
             Location home = getHome(target, homeSpecified ? args[1] : "home");
             if (home == null) {
+                sender.sendMessage(error("home-not-set.other", "%p", target.getName()));
                 return true;
             }
 
             player.teleport(home);
-            sender.sendMessage(homeSpecified ? message("tp.player.other", "%h", args[1]) : message("tp.player.home"));
+            sender.sendMessage(homeSpecified ? message("tp.player.other", "%p", target.getName(), "%h", args[1]) : message("tp.player.other.home"));
 
         } else {
             sender.sendMessage(playerOnly("teleport to someone's home"));
@@ -173,11 +174,11 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                 } else {
                     Position home = getHomeAsPosition(player, "home");
                     if (home != null) {
-                        String coords = getCoordsString(home);
-                        if (args[0].equalsIgnoreCase("coords")) {
-                            sender.sendMessage(coords);
+                        String coordinates = getCoordinateString(home);
+                        if (args[0].equalsIgnoreCase("coordinates")) {
+                            sender.sendMessage(coordinates);
                         } else if (args[0].equalsIgnoreCase("chat")) {
-                            player.chat(ChatColor.stripColor(coords));
+                            player.chat(ChatColor.stripColor(coordinates));
                         } else {
                             return false;
                         }
@@ -199,7 +200,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             } else {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    if (args[0].equalsIgnoreCase("msg")) {
+                    if (args[0].equalsIgnoreCase("whisper")) {
                         Position home = getHomeAsPosition(player, "home");
                         if (home != null) {
                             if (messageHome(args[1], player, home)) return true;
@@ -207,10 +208,10 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                     } else {
                         Position home = getHomeAsPosition(player, args[1]);
                         if (home != null) {
-                            if (args[0].equalsIgnoreCase("coords")) {
-                                player.sendMessage(getCoordsString(home));
+                            if (args[0].equalsIgnoreCase("coordinates")) {
+                                player.sendMessage(getCoordinateString(home));
                             } else if (args[0].equalsIgnoreCase("chat")) {
-                                player.chat(ChatColor.stripColor(getCoordsString(home)));
+                                player.chat(ChatColor.stripColor(getCoordinateString(home)));
                             }
                         }
                     }
@@ -219,7 +220,7 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
                 }
             }
         } else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("msg")) {
+            if (args[0].equalsIgnoreCase("whisper")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     Position home = getHomeAsPosition(player, args[2]);
@@ -243,9 +244,9 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             return true;
         }
         for (Player target : players) {
-            String command = "[" + "msg " + target.getName() + " " + ChatColor.stripColor(getCoordsString(home)) + "]";
+            String command = "[" + "w " + target.getName() + " " + ChatColor.stripColor(getCoordinateString(home)) + "]";
             System.out.println(command);
-            player.performCommand("msg " + target.getName() + " " + ChatColor.stripColor(getCoordsString(home)));
+            player.performCommand("w " + target.getName() + " " + ChatColor.stripColor(getCoordinateString(home)));
         }
         return false;
     }
@@ -310,8 +311,8 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
             sender.sendMessage(message(key + ".title", "%p", target.getName()));
             RawMessage message = new RawMessage();
             for (String homeName : homes.keySet()) {
-                String coordsString = message(key + ".item", "%v", getCoordsString(target, homeName));
-                RawComponent component = new RawComponent(coordsString);
+                String coordinatesString = message(key + ".item", "%v", getCoordinateString(target, homeName));
+                RawComponent component = new RawComponent(coordinatesString);
                 component.setCommand("/home " + homeName + (isSelf ? "" : " " + target.getName()));
                 message.addComponent(component);
             }
@@ -320,21 +321,21 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
         } else {
             List<String> homeNames = new ArrayList<>();
             for (String homeName : homes.keySet()) {
-                homeNames.add(getCoordsString(target, homeName));
+                homeNames.add(getCoordinateString(target, homeName));
             }
             sender.sendMessage(list(key, homeNames, "%p", target.getName()));
         }
     }
 
-    private String getCoordsString(OfflinePlayer player, String home) {
+    private String getCoordinateString(OfflinePlayer player, String home) {
         Location location = getHome(player, home);
-        String coords = Position.toStringTrimmed(location);
-        return message("chat", "%h", home, "%c", coords);
+        String coordinates = Position.toStringTrimmed(location);
+        return message("chat", "%h", home, "%c", coordinates);
     }
 
-    private String getCoordsString(Position home) {
-        String coords = home.toStringTrimmed();
-        return message("chat", "%h", home.getName(), "%c", coords);
+    private String getCoordinateString(Position home) {
+        String coordinates = home.toStringTrimmed();
+        return message("chat", "%h", home.getName(), "%c", coordinates);
     }
 
     @Override
@@ -352,22 +353,31 @@ public class HomeCommand extends UltraCommand implements CommandExecutor, TabExe
         } else if (command.getName().equals("homes")) {
             if (args.length == 1) {
                 suggestions.add("list");
-                suggestions.add("coords");
+                suggestions.add("coordinates");
                 suggestions.add("chat");
-                suggestions.add("msg");
+                suggestions.add("whisper");
             } else if (args.length == 2) {
                 if (args[0].matches("list")) {
                     suggestions = getOfflinePlayerNames();
-                } else if (args[0].matches("msg")) {
+                } else if (args[0].matches("whisper")) {
                     return null;
-                } else if (args[0].matches("coords|chat")) {
+                } else if (args[0].matches("coordinates|chat")) {
                     suggestions.addAll(getHomes((Player) sender).keySet());
                 }
             } else if (args.length == 3) {
-                if (args[0].equalsIgnoreCase("msg")) {
-                    if (getPlayers(args[1]).isEmpty()) {
+                if (args[0].equalsIgnoreCase("whisper")) {
+                    if (!getPlayers(args[1]).isEmpty()) {
                         suggestions.addAll(getHomes((Player) sender).keySet());
                     }
+                }
+            }
+        } else if (command.getName().equals("homeof")) {
+            if (args.length == 1) {
+                suggestions = getOfflinePlayerNames();
+            } else if (args.length == 2) {
+                OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[0]);
+                if (isValid(player)) {
+                    suggestions.addAll(getHomes(player).keySet());
                 }
             }
         }

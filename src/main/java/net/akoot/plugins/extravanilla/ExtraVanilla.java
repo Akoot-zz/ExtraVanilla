@@ -35,10 +35,7 @@ public final class ExtraVanilla extends UltraPlugin {
     public void start() {
 
         // Register serializable classes
-        serialize(Title.class, "title");
-
-        // Copy defaults from the jar for config.yml if needed
-        copyDefaults("config.yml");
+        serialize(Title.class, "Title");
 
         // Register config
         config = new Config(this, getClass(), "config.yml");
@@ -57,7 +54,6 @@ public final class ExtraVanilla extends UltraPlugin {
 
         // Register configs
         registerConfig(titles);
-        registerConfig(config);
 
         // Register /extravanilla command
         registerCommand("extravanilla", new ExtravanillaCommand(this));
@@ -81,6 +77,7 @@ public final class ExtraVanilla extends UltraPlugin {
         registerCommand("homes", homeCommand);
         registerCommand("delhome", homeCommand);
         registerCommand("sethome", homeCommand);
+        registerCommand("homeof", homeCommand);
 
         // Register /spawn
         SpawnCommand spawnCommand = new SpawnCommand(this);
@@ -93,6 +90,8 @@ public final class ExtraVanilla extends UltraPlugin {
         // Register /nickname
         NicknameCommand nicknameCommand = new NicknameCommand(this);
         registerCommand("nickname", nicknameCommand);
+        registerCommand("namecolor", nicknameCommand);
+        registerCommand("chatcolor", nicknameCommand);
         registerEvents(nicknameCommand);
 
         // Register events
