@@ -95,3 +95,7 @@ commands:
     aliases: [cc]
     permission: extravanilla.command.chatcolor
     usage: /cc [player] <color>
+  back:
+    description: Teleports a user back to their last location
+    permission: extravanilla.command.back
+    usage: /back [player(s)]

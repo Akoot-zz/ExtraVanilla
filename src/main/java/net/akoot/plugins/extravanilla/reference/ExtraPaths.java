@@ -14,12 +14,6 @@ public class ExtraPaths {
         public static final String MAX_HOMES = "max.homes";
     }
 
-    public static class Channels {
-
-        public static final String ROOT = "channels";
-
-    }
-
     public static class Titles {
 
         public static final String ROOT = "titles";
@@ -43,13 +37,7 @@ public class ExtraPaths {
 
         public static final String HOMES = "data.homes";
 
-    }
-
-    public static class Discord {
-
-        public static final String TOKEN = "discord.token";
-        public static final String MAIN_CHANNEL = "discord.main-channel";
-
+        public static final String LAST_TP_LOCATION = "data.last-tp-location";
     }
 
 }

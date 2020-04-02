@@ -1,4 +1,19 @@
 command:
+  back:
+    error:
+      teleport:
+        location-null:
+          sender: "&xYou do do not have a location to teleport back to!"
+          player: "&@%p &xdoes not have a location to teleport back to!"
+    message:
+      teleport:
+        sender: "Teleporting &@%p to &#%l&:..."
+        player:
+          - "Going back.. to heck..."
+          - "GOING BACK"
+          - "Back to your pitiful location..."
+          - "BACK"
+          - "Teleporting to your previous location..."
   chatcolor:
     message:
       reset: "Reset your chat color"

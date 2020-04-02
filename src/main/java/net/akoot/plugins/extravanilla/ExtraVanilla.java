@@ -64,6 +64,7 @@ public final class ExtraVanilla extends UltraPlugin {
         // Register /afk command
         AfkCommand afkCommand = new AfkCommand(this);
         registerCommand("afk", afkCommand);
+        registerEvents(afkCommand);
 
         // Register /alias command
         registerCommand("alias", new AliasCommand(this));
@@ -94,10 +95,14 @@ public final class ExtraVanilla extends UltraPlugin {
         registerCommand("chatcolor", nicknameCommand);
         registerEvents(nicknameCommand);
 
+        // Register /back
+        BackCommand backCommand = new BackCommand(this);
+        registerCommand("back", backCommand);
+        registerEvents(backCommand);
+
         // Register events
         registerEvents(new EventListener(this));
 
-        registerEvents(afkCommand);
     }
 
     @Override
